@@ -1,0 +1,2 @@
+from fake_news_detection.models.model import MyNeuralNet
+from fake_news_detection.predict_model import predict
