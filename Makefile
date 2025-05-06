@@ -56,6 +56,19 @@ build_documentation: dev_requirements
 serve_documentation: dev_requirements
 	mkdocs serve --config-file docs/mkdocs.yaml
 
+## Lint the codebase using Ruff
+lint:
+	ruff check .
+
+## Format the codebase using Black
+format:
+	black .
+	isort .
+
+## Run type checks with Mypy
+typecheck:
+	mypy fake_news_detection
+
 #################################################################################
 # Self Documenting Commands                                                     #
 #################################################################################
