@@ -35,7 +35,7 @@ def plot_accuracy_loss(history):
     # plt.show()
 
 
-def plot_confusion_matrix(model, X_test, y_test_one_hot, filename="confusion_matrix.png"):
+def plot_confusion_matrix(model, X_test, y_test_one_hot, filename="train_confusion_matrix.png"):
     """Plot and save confusion matrix for predictions on the test set."""
     y_pred_probs = model.predict(X_test)
     y_pred_labels = np.argmax(y_pred_probs, axis=1)

@@ -47,7 +47,7 @@ def process_text(text):
     return [words[i] for i in sorted(idx)]
 
 def load_cleaned_data():
-    df = pd.read_csv("../data/processed/clean_data.csv")
+    df = pd.read_csv("../data/processed/train.csv")
     df = df[df["text"].apply(lambda x: isinstance(x, str))]
     return df["text"].tolist(), df["label"].tolist()
 
@@ -101,6 +101,27 @@ def train():
         loss, accuracy = model.evaluate(X_test_pad, y_test_enc)
         mlflow.log_metric("test_loss", loss)
         mlflow.log_metric("test_accuracy", accuracy)
+        print(f"Test Loss: {loss:.4f}")
+        print(f"Test Accuracy: {accuracy:.4f}")
+
+        # Predict & compute precision / recall / F1
+        y_pred_probs = model.predict(X_test_pad)
+        y_pred = np.argmax(y_pred_probs, axis=1)
+        y_true = np.argmax(y_test_enc, axis=1)
+
+        from sklearn.metrics import precision_score, recall_score, f1_score
+
+        precision = precision_score(y_true, y_pred)
+        recall = recall_score(y_true, y_pred)
+        f1 = f1_score(y_true, y_pred)
+
+        print(f"Precision: {precision:.4f}")
+        print(f"Recall: {recall:.4f}")
+        print(f"F1 Score: {f1:.4f}")
+
+        mlflow.log_metric("test_precision", precision)
+        mlflow.log_metric("test_recall", recall)
+        mlflow.log_metric("test_f1_score", f1)
 
         model.save("../models/lstm_model.h5")
         mlflow.tensorflow.log_model(model, artifact_path="model")

@@ -16,13 +16,15 @@ from nltk.tokenize.punkt import PunktSentenceTokenizer
 from nltk.tokenize.treebank import TreebankWordTokenizer
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+
 
 # Load model and tokenizer
 MODEL_PATH = "../models/lstm_model.h5"
 TOKENIZER_PATH = "../models/tokenizer.pkl"
 DATA_PATH = "../data/processed/predict.csv"
-RESULT_PATH = "../data/processed/predicted_results.csv"
-CONF_MATRIX_PATH = "../reports/figures/confusion_matrix_predict.png"
+# RESULT_PATH = "../data/processed/predicted_results.csv"
+CONF_MATRIX_PATH = "/reports/figures/confusion_matrix_predict.png"
 
 nltk.data.path.append("./data/raw/")
 sent_tokenizer = PunktSentenceTokenizer()
@@ -81,12 +83,20 @@ def predict():
     if "label" in df.columns:
         y_true = df["label"].tolist()
         acc = accuracy_score(y_true, predicted_labels)
+        precision = precision_score(y_true, predicted_labels)
+        recall = recall_score(y_true, predicted_labels)
+        f1 = f1_score(y_true, predicted_labels)
+
         print(f"Prediction Accuracy: {acc:.4f}")
+        print(f"Precision: {precision:.4f}")
+        print(f"Recall: {recall:.4f}")
+        print(f"F1 Score: {f1:.4f}")
+
         plot_confusion_matrix(y_true, predicted_labels, CONF_MATRIX_PATH)
         print(f"Confusion matrix saved to {CONF_MATRIX_PATH}")
 
-    df.to_csv(RESULT_PATH, index=False)
-    print(f"Prediction complete. Results saved to {RESULT_PATH}")
+    # df.to_csv(RESULT_PATH, index=False)
+    # print(f"Prediction complete. Results saved to {RESULT_PATH}")
 
 
 if __name__ == "__main__":
