@@ -8,7 +8,6 @@ cleans the text, and outputs a single processed dataset.
 
 import os
 import re
-from typing import List
 
 import nltk
 import pandas as pd
