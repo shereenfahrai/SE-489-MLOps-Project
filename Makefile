@@ -20,6 +20,9 @@ PYTHON_INTERPRETER = python
 create_environment:
 	conda create --name $(PROJECT_NAME) python=$(PYTHON_VERSION) --no-default-packages -y
 
+activate_environment:
+	conda activate $(PROJECT_NAME)
+
 ## Install Python Dependencies
 requirements:
 	$(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
@@ -56,18 +59,23 @@ build_documentation: dev_requirements
 serve_documentation: dev_requirements
 	mkdocs serve --config-file docs/mkdocs.yaml
 
-## Lint the codebase using Ruff
+## Lint the codebase 
 lint:
 	ruff check .
 
-## Format the codebase using Black
+## Re‑format the codebase
 format:
 	black .
 	isort .
+	ruff format .
+
+## Auto‑apply all Ruff‑supported fixes
+fix:
+	ruff check --fix .
 
 ## Run type checks with Mypy
 typecheck:
-	mypy fake_news_detection
+	mypy $(PROJECT_NAME)
 
 #################################################################################
 # Self Documenting Commands                                                     #
