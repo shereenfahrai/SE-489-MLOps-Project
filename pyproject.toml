@@ -11,7 +11,7 @@ authors = [
 ]
 license = { file = "LICENSE" }
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dynamic = ["dependencies", "optional-dependencies"]
 
 [tool.setuptools]
@@ -25,16 +25,3 @@ dev = {file = ['requirements_dev.txt']}
 
 [tool.ruff]
 line-length = 120
-target-version = "py310"
-fix = true
-exclude = ["build", "dist", ".venv"]
-
-[tool.ruff.lint]
-select = ["E", "F", "I"]
-
-[tool.mypy]
-python_version = "3.10"
-strict = true
-ignore_missing_imports = true
-disallow_untyped_defs = true
-no_implicit_optional = true
