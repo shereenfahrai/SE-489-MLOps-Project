@@ -1,30 +1,28 @@
 # fake_news_detection/predict_model.py
 
-import pandas as pd
-import numpy as np
 import pickle
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.metrics import accuracy_score, confusion_matrix
-
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-
 import re
+from typing import List, Sequence
+
+import matplotlib.pyplot as plt
 import nltk
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
 from nltk.tokenize.punkt import PunktSentenceTokenizer
 from nltk.tokenize.treebank import TreebankWordTokenizer
-from nltk.stem import WordNetLemmatizer
-from nltk.corpus import stopwords
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
-
+from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_score, recall_score
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 # Load model and tokenizer
 MODEL_PATH = "../models/lstm_model.h5"
 TOKENIZER_PATH = "../models/tokenizer.pkl"
 DATA_PATH = "../data/processed/predict.csv"
 # RESULT_PATH = "../data/processed/predicted_results.csv"
-CONF_MATRIX_PATH = "/reports/figures/confusion_matrix_predict.png"
+CONF_MATRIX_PATH = "reports/figures/confusion_matrix_predict.png"
 
 nltk.data.path.append("./data/raw/")
 sent_tokenizer = PunktSentenceTokenizer()
@@ -36,12 +34,12 @@ maxlen = 150  # same as training
 
 
 # Preprocessing
-def safe_word_tokenize(text):
+def safe_word_tokenize(text: str) -> List[str]:
     sentences = sent_tokenizer.tokenize(text)
     return [token for sent in sentences for token in word_tokenizer.tokenize(sent)]
 
 
-def process_text(text):
+def process_text(text: str) -> List[str]:
     text = re.sub(r'[^a-zA-Z\s]', '', text).lower()
     words = safe_word_tokenize(text)
     words = [lemmatizer.lemmatize(w) for w in words if w not in stop_words and len(w) > 3]
@@ -49,7 +47,11 @@ def process_text(text):
     return [words[i] for i in sorted(idx)]
 
 
-def plot_confusion_matrix(y_true, y_pred, save_path):
+def plot_confusion_matrix(
+    y_true: Sequence[int],
+    y_pred: Sequence[int],
+    save_path: str
+) -> None:
     matrix = confusion_matrix(y_true, y_pred)
     plt.figure(figsize=(6, 5))
     sns.heatmap(matrix, annot=True, fmt='d', cmap='Blues', xticklabels=['Fake', 'Real'], yticklabels=['Fake', 'Real'])
@@ -61,7 +63,7 @@ def plot_confusion_matrix(y_true, y_pred, save_path):
     plt.close()
 
 
-def predict():
+def predict() -> None:
     model = load_model(MODEL_PATH)
     with open(TOKENIZER_PATH, "rb") as f:
         tokenizer = pickle.load(f)

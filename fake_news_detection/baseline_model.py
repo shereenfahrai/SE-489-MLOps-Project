@@ -1,14 +1,13 @@
 import os
-import pandas as pd
-import numpy as np
-
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
-from sklearn.model_selection import StratifiedKFold
 
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import seaborn as sns
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_score, recall_score
+from sklearn.model_selection import StratifiedKFold
 
 # Load cleaned data
 df = pd.read_csv("../data/processed/train.csv")
@@ -62,7 +61,8 @@ for fold, (train_idx, test_idx) in enumerate(skf.split(X_tfidf, y)):
 # Plot confusion matrix of last fold
 os.makedirs("reports/figures", exist_ok=True)
 plt.figure(figsize=(6, 5))
-sns.heatmap(conf_matrix_final, annot=True, fmt='d', cmap='Blues', xticklabels=['Fake', 'Real'], yticklabels=['Fake', 'Real'])
+sns.heatmap(conf_matrix_final, annot=True, fmt='d', cmap='Blues', xticklabels=['Fake', 'Real'],
+            yticklabels=['Fake', 'Real'])
 plt.title("Baseline Confusion Matrix (Last Fold)")
 plt.xlabel("Predicted")
 plt.ylabel("Actual")

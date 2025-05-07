@@ -1,33 +1,33 @@
 # fake_news_detection/train_model.py
 
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-from tensorflow.keras.utils import to_categorical
-from sklearn.preprocessing import LabelEncoder
-import numpy as np
+import pickle
 import re
-import nltk
+
 import mlflow
 import mlflow.tensorflow
-import os
-import pickle
+import nltk
+import numpy as np
+import pandas as pd
+from typing import List, Tuple, Union
+
+# Tokenization setup
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize.punkt import PunktSentenceTokenizer
+from nltk.tokenize.treebank import TreebankWordTokenizer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.utils import to_categorical
 
 from fake_news_detection.models.model import build_lstm_model
 from fake_news_detection.visualizations.visualize import plot_accuracy_loss, plot_confusion_matrix
-
+from sklearn.metrics import f1_score, precision_score, recall_score
 
 # MLflow setup
 mlflow.set_experiment("fake-news-lstm")
 print("MLflow experiment:", mlflow.get_experiment_by_name("fake-news-lstm"))
-
-
-# Tokenization setup
-from nltk.tokenize.punkt import PunktSentenceTokenizer
-from nltk.tokenize.treebank import TreebankWordTokenizer
-from nltk.stem import WordNetLemmatizer
-from nltk.corpus import stopwords
 
 nltk.data.path.append("./data/raw/")
 sent_tokenizer = PunktSentenceTokenizer()
@@ -35,23 +35,27 @@ word_tokenizer = TreebankWordTokenizer()
 lemmatizer = WordNetLemmatizer()
 stop_words = set(stopwords.words("english"))
 
-def safe_word_tokenize(text):
+
+def safe_word_tokenize(text: str) -> List[str]:
     sentences = sent_tokenizer.tokenize(text)
     return [token for sent in sentences for token in word_tokenizer.tokenize(sent)]
 
-def process_text(text):
+
+def process_text(text: str) -> List[str]:
     text = re.sub(r'[^a-zA-Z\s]', '', text).lower()
     words = safe_word_tokenize(text)
     words = [lemmatizer.lemmatize(w) for w in words if w not in stop_words and len(w) > 3]
     _, idx = np.unique(words, return_index=True)
     return [words[i] for i in sorted(idx)]
 
-def load_cleaned_data():
+
+def load_cleaned_data() -> Tuple[List[str], List[Union[str, int]]]:
     df = pd.read_csv("../data/processed/train.csv")
     df = df[df["text"].apply(lambda x: isinstance(x, str))]
     return df["text"].tolist(), df["label"].tolist()
 
-def train():
+
+def train() -> None:
     texts, y = load_cleaned_data()
     cleaned_texts = [process_text(text) for text in texts]
 
@@ -109,8 +113,6 @@ def train():
         y_pred = np.argmax(y_pred_probs, axis=1)
         y_true = np.argmax(y_test_enc, axis=1)
 
-        from sklearn.metrics import precision_score, recall_score, f1_score
-
         precision = precision_score(y_true, y_pred)
         recall = recall_score(y_true, y_pred)
         f1 = f1_score(y_true, y_pred)
@@ -131,6 +133,7 @@ def train():
 
         plot_accuracy_loss(history)
         plot_confusion_matrix(model, X_test_pad, y_test_enc)
+
 
 if __name__ == "__main__":
     train()
