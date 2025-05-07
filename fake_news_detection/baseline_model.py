@@ -61,8 +61,14 @@ for fold, (train_idx, test_idx) in enumerate(skf.split(X_tfidf, y)):
 # Plot confusion matrix of last fold
 os.makedirs("reports/figures", exist_ok=True)
 plt.figure(figsize=(6, 5))
-sns.heatmap(conf_matrix_final, annot=True, fmt='d', cmap='Blues', xticklabels=['Fake', 'Real'],
-            yticklabels=['Fake', 'Real'])
+sns.heatmap(
+    conf_matrix_final,
+    annot=True,
+    fmt="d",
+    cmap="Blues",
+    xticklabels=["Fake", "Real"],
+    yticklabels=["Fake", "Real"],
+)
 plt.title("Baseline Confusion Matrix (Last Fold)")
 plt.xlabel("Predicted")
 plt.ylabel("Actual")
