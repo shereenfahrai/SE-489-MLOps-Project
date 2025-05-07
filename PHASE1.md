@@ -8,17 +8,22 @@
     2. Develop a reproducible, version‑controlled pipeline that ingests raw data, preprocesses text, trains the model, and evaluates performance.  
     3. Integrate experiment tracking via Weights & Biases to log hyperparameters and metrics.  
     4. Lay the groundwork for a simple GUI in Phase 3, allowing users to input articles and receive real-time classifications.
-  - [ ] Success metrics
+  - [ ] Success metrics (targets):
+    *These are the performance goals we hope to reach on the hold‑out set; our baseline from the adapted notebook already achieved ~97.9 % accuracy!*
+    - Accuracy ≥ 95 %  
+    - Precision ≥ 90 %  
+    - Recall ≥ 90 %  
+    - F1‑score ≥ 0.90  
 
   - [ ] 300+ word project description: 
   
-The goal of this project is to address the issue of misinformation by constructing a strong machine learning model that is able to categorize news articles as being either “fake” or “real.” Given the prevalence of misleading and completely falsified content circulating online, manual fact‑checking is insufficient to keep up with the volume of daily publications. Our overall objective is to produce an end-to-end reproducible pipeline— from raw data input to preprocessing, model training, testing, and simple deployment scaffolding— in a manner that may be iterated, monitored, and scaled in production.
+The goal of this project is to address the issue of misinformation by constructing a machine learning model that is able to categorize news articles as being either “fake” or “real.” Given the prevalence of misleading and completely falsified content circulating online, manual fact‑checking is insufficient to keep up with the volume of daily publications. Our overall objective is to produce an end-to-end reproducible pipeline— from raw data input to preprocessing, model training, testing, and simple deployment scaffolding— in a manner that may be iterated, monitored, and scaled in production.
 
 We have thus far built our workflow from a Cookiecutter MLOps template, with a standardized repository setup and well-isolated modules for data, models, scripts, and tests. Data preprocessing is automated in a single Python script (make_dataset.py) that merges and labels the Kaggle “Fake and Real News” dataset, drops irrelevant columns, lowercases and tokenizes text, lemmatizes with NLTK, removes stopwords, and outputs a cleaned CSV. All steps are version-controlled, with development requirements using Conda and pip, and adherence to code quality by Ruff and Mypy.
 
-To build our model, we will utilize TensorFlow and Keras to design a Long Short‑Term Memory (LSTM) neural network. LSTMs are selected due to their sensitivity to long‑range dependencies and fine‑grained linguistic cues at the paragraph level- important for separating misleading language patterns from true reporting. We will include dropout and global max‑pooling layers to avoid the risks of overfitting, and we’ll track hyperparameters, metrics, and artifacts with Weights & Biases; we have chosen to use the third‑party tool because it is integrated well with Keras using a WandbCallback, supplying us with real‑time dashboards and experiment versioning.
+To build our model, we will utilize TensorFlow and Keras to design a Long Short‑Term Memory (LSTM) neural network. LSTMs are selected due to their sensitivity to long‑range dependencies and fine‑grained linguistic cues at the paragraph level- important for separating misleading language patterns from true reporting. We will include dropout and global max‑pooling layers to avoid the risks of overfitting, and we’ll track hyperparameters, metrics, and artifacts with Weights & Biases; we have chosen to use this third‑party tool because it is integrated well with Keras using a WandbCallback, supplying us with real‑time dashboards and experiment versioning.
 
-Our base dataset is in the form of two CSV files, Fake.csv (label 0) and True.csv (label 1), with more than 44,000 articles. This pre‑labeled, balanced dataset supports rapid prototyping without relabeling overhead and without data augmentation. We will assess our model with accuracy, precision, recall, and F1‑score on a held‑out test set, aiming for ≥ 95 % accuracy and good precision/recall tradeoffs.
+Our base dataset is in the form of two CSV files, Fake.csv (label 0) and True.csv (label 1), with more than 44,000 articles. This pre‑labeled, balanced dataset supports quick prototyping without relabeling overhead and without data augmentation. We will assess our model with accuracy, precision, recall, and F1‑score on a held‑out test set, aiming for ≥ 95 % accuracy and good precision/recall tradeoffs.
 
 By the conclusion of Phase 1, we will have a clean, well-documented data pipeline and a baseline LSTM classifier whose performance is tracked in Weights & Biases. Future phases will build on this using CI/CD, model drift monitoring, and ultimately, a simple GUI user interface for inputting URLs or text and getting real‑time predictions.
 
@@ -35,6 +40,9 @@ By the conclusion of Phase 1, we will have a clean, well-documented data pipel
     5. Lemmatized tokens via WordNet.  
     6. Removed English stopwords and tokens shorter than 4 characters.  
     7. Rejoined tokens into cleaned sentences and saved to `data/processed/clean_data.csv`.
+    8. Split cleaned data into:
+      - `train.csv` (90 %, stratified) for model training  
+      - `predict.csv` (10 %, stratified) for inference/testing
 - [ ] **1.3 Model Considerations**
   - [ ] Model architecture(s) considered
   - [ ] Rationale for model choice:
@@ -46,7 +54,7 @@ By the conclusion of Phase 1, we will have a clean, well-documented data pipel
 - [ ] **1.4 Open-source Tools**
   - [ ] Third-party package(s) selected (not PyTorch or course-used tools)
     - Weights & Biases: for logging hyperparameters, metrics, and artifacts with minimal code changes
-    - NLTK: used to standardize cleaning, as it provides text-processing utilities (e.g. `punkt`, `stopwords`, `wordnet`)
+    - NLTK: used to standardize cleaning, as it provides text-processing utilities (e.g. `punkt`, `punkt_tab`, `stopwords`, `wordnet`)
   - [ ] Brief description of how/why used
 
 
