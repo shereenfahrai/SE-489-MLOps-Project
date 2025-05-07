@@ -40,21 +40,24 @@ def safe_word_tokenize(text: str) -> List[str]:
 
 
 def process_text(text: str) -> List[str]:
-    text = re.sub(r'[^a-zA-Z\s]', '', text).lower()
+    text = re.sub(r"[^a-zA-Z\s]", "", text).lower()
     words = safe_word_tokenize(text)
     words = [lemmatizer.lemmatize(w) for w in words if w not in stop_words and len(w) > 3]
     _, idx = np.unique(words, return_index=True)
     return [words[i] for i in sorted(idx)]
 
 
-def plot_confusion_matrix(
-    y_true: Sequence[int],
-    y_pred: Sequence[int],
-    save_path: str
-) -> None:
+def plot_confusion_matrix(y_true: Sequence[int], y_pred: Sequence[int], save_path: str) -> None:
     matrix = confusion_matrix(y_true, y_pred)
     plt.figure(figsize=(6, 5))
-    sns.heatmap(matrix, annot=True, fmt='d', cmap='Blues', xticklabels=['Fake', 'Real'], yticklabels=['Fake', 'Real'])
+    sns.heatmap(
+        matrix,
+        annot=True,
+        fmt="d",
+        cmap="Blues",
+        xticklabels=["Fake", "Real"],
+        yticklabels=["Fake", "Real"],
+    )
     plt.xlabel("Predicted")
     plt.ylabel("True")
     plt.title("Confusion Matrix")

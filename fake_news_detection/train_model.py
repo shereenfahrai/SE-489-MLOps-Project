@@ -2,19 +2,20 @@
 
 import pickle
 import re
+from typing import List, Tuple, Union
 
 import mlflow
 import mlflow.tensorflow
 import nltk
 import numpy as np
 import pandas as pd
-from typing import List, Tuple, Union
 
 # Tokenization setup
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize.punkt import PunktSentenceTokenizer
 from nltk.tokenize.treebank import TreebankWordTokenizer
+from sklearn.metrics import f1_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.preprocessing.sequence import pad_sequences
@@ -23,7 +24,6 @@ from tensorflow.keras.utils import to_categorical
 
 from fake_news_detection.models.model import build_lstm_model
 from fake_news_detection.visualizations.visualize import plot_accuracy_loss, plot_confusion_matrix
-from sklearn.metrics import f1_score, precision_score, recall_score
 
 # MLflow setup
 mlflow.set_experiment("fake-news-lstm")
@@ -42,7 +42,7 @@ def safe_word_tokenize(text: str) -> List[str]:
 
 
 def process_text(text: str) -> List[str]:
-    text = re.sub(r'[^a-zA-Z\s]', '', text).lower()
+    text = re.sub(r"[^a-zA-Z\s]", "", text).lower()
     words = safe_word_tokenize(text)
     words = [lemmatizer.lemmatize(w) for w in words if w not in stop_words and len(w) > 3]
     _, idx = np.unique(words, return_index=True)
@@ -84,7 +84,7 @@ def train() -> None:
             embed_dim=100,
             lstm_units=150,
             dropout_rate=0.5,
-            learning_rate=0.0001
+            learning_rate=0.0001,
         )
 
         mlflow.log_param("epochs", 15)
@@ -99,7 +99,7 @@ def train() -> None:
             y_train_enc,
             epochs=15,
             validation_data=(X_test_pad, y_test_enc),
-            verbose=1
+            verbose=1,
         )
 
         loss, accuracy = model.evaluate(X_test_pad, y_test_enc)

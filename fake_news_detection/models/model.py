@@ -10,12 +10,12 @@ from tensorflow.keras.optimizers import Adam
 
 
 def build_lstm_model(
-        vocab_size: int,
-        maxlen: int = 150,
-        embed_dim: int = 100,
-        lstm_units: int = 150,
-        dropout_rate: float = 0.5,
-        learning_rate: float = 0.0001
+    vocab_size: int,
+    maxlen: int = 150,
+    embed_dim: int = 100,
+    lstm_units: int = 150,
+    dropout_rate: float = 0.5,
+    learning_rate: float = 0.0001,
 ) -> Model:
     """
     Builds an LSTM-based text classification model.
