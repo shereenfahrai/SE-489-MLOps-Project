@@ -2,13 +2,16 @@
 make_dataset.py
 
 This script processes raw news data (True.csv and Fake.csv), labels it,
-cleans the text, and outputs a single processed dataset.
+cleans the text, outputs a full cleaned dataset, and splits it into
+train (90%) and predict (10%) CSV files.
 
+References:
+- Dataset: https://www.kaggle.com/datasets/clmentbisaillon/fake-and-real-news-dataset
+- Notebook: https://www.kaggle.com/code/yossefmohammed/true-and-fake-news-lstm-accuracy-97-90
 """
 
 import os
 import re
-from typing import List
 
 import nltk
 import pandas as pd
@@ -16,6 +19,7 @@ from nltk.corpus import stopwords
 from nltk.data import find
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+from sklearn.model_selection import train_test_split
 
 
 def ensure_nltk_data() -> None:
@@ -42,20 +46,19 @@ def clean_text(text: str) -> str:
     text = re.sub(r"\s+[a-zA-Z]\s+", " ", text)
     text = re.sub(r"[^a-zA-Z\s]", "", text)
     text = text.lower()
-    words = word_tokenize(text)
 
+    tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
-    words = [lemmatizer.lemmatize(word) for word in words]
+    tokens = [lemmatizer.lemmatize(tok) for tok in tokens]
 
     stop_words = set(stopwords.words("english"))
-    words = [word for word in words if word not in stop_words and len(word) > 3]
+    tokens = [tok for tok in tokens if tok not in stop_words and len(tok) > 3]
 
-    return " ".join(words)
+    return " ".join(tokens)
 
 
 def main() -> None:
-    """Main function to load, clean, and save the dataset."""
-
+    """Main function to load, clean, split, and save datasets."""
     ensure_nltk_data()
 
     raw_dir = "data/raw"
@@ -71,18 +74,34 @@ def main() -> None:
     true_df["label"] = 1
 
     print("Merging datasets...")
-    combined_df = pd.concat([fake_df, true_df], ignore_index=True)
-    combined_df.drop(columns=["title", "subject", "date"], inplace=True)
+    df = pd.concat([fake_df, true_df], ignore_index=True)
+    df.drop(columns=["title", "subject", "date"], inplace=True)
 
     print("Cleaning text...")
-    combined_df["text"] = combined_df["text"].apply(clean_text)
+    df["text"] = df["text"].apply(clean_text)
 
     os.makedirs(processed_dir, exist_ok=True)
-    output_path = os.path.join(processed_dir, "clean_data.csv")
+    clean_path = os.path.join(processed_dir, "clean_data.csv")
+    print(f"Saving full cleaned data to {clean_path}...")
+    df.to_csv(clean_path, index=False)
 
-    print(f"Saving cleaned data to {output_path}...")
-    combined_df.to_csv(output_path, index=False)
-    print("Data processing complete.")
+    # Split off a small portion for prediction/testing
+    print("Splitting data into train (90%) and predict (10%) sets...")
+    train_df, predict_df = train_test_split(
+        df,
+        test_size=0.10,
+        stratify=df["label"],
+        random_state=42,
+    )
+
+    train_path = os.path.join(processed_dir, "train.csv")
+    pred_path = os.path.join(processed_dir, "predict.csv")
+    print(f"Saving train data to {train_path} ({len(train_df)} rows)...")
+    train_df.to_csv(train_path, index=False)
+    print(f"Saving predict data to {pred_path} ({len(predict_df)} rows)...")
+    predict_df.to_csv(pred_path, index=False)
+
+    print("✅ Data processing and splitting complete.")
 
 
 if __name__ == "__main__":
