@@ -1,14 +1,15 @@
-import matplotlib.pyplot as plt
-import seaborn as sns
-import numpy as np
 import os
+
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+from typing import Union
 from sklearn.metrics import confusion_matrix
+from tensorflow.keras.callbacks import History
+from tensorflow.keras.models import Model
 
-# Ensure output directory exists
-os.makedirs("reports/figures", exist_ok=True)
 
-
-def plot_accuracy_loss(history):
+def plot_accuracy_loss(history: History) -> None:
     """Plot and save training and validation accuracy/loss curves."""
     # Accuracy plot
     plt.figure(figsize=(8, 5))
@@ -32,10 +33,14 @@ def plot_accuracy_loss(history):
     plt.legend(loc='upper left')
     plt.tight_layout()
     plt.savefig("reports/figures/loss.png")
-    # plt.show()
 
 
-def plot_confusion_matrix(model, X_test, y_test_one_hot, filename="train_confusion_matrix.png"):
+def plot_confusion_matrix(
+        model: Model,
+        X_test: np.ndarray,
+        y_test_one_hot: np.ndarray,
+        filename: str = "train_confusion_matrix.png"
+) -> None:
     """Plot and save confusion matrix for predictions on the test set."""
     y_pred_probs = model.predict(X_test)
     y_pred_labels = np.argmax(y_pred_probs, axis=1)
@@ -51,4 +56,3 @@ def plot_confusion_matrix(model, X_test, y_test_one_hot, filename="train_confusi
     plt.title('Confusion Matrix')
     plt.tight_layout()
     plt.savefig(f"reports/figures/{filename}")
-    # plt.show()

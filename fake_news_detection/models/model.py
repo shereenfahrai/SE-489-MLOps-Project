@@ -4,8 +4,8 @@ model.py
 Defines the LSTM-based text classification model.
 """
 
+from tensorflow.keras.layers import LSTM, Dense, Dropout, Embedding, GlobalMaxPooling1D, Input
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Input, Embedding, LSTM, GlobalMaxPooling1D, Dense, Dropout
 from tensorflow.keras.optimizers import Adam
 
 
