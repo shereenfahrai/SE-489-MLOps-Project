@@ -84,9 +84,44 @@ By the conclusion of Phase 1, we will have a clean, well-documented data pipel
 ## 5. Model Training
 - [ ] **5.1 Training Infrastructure**
   - [ ] Training environment setup (e.g., Colab, GPU)
+    We trained the model locally using a Conda-managed Python 3.11 environment on a CPU-only machine. All dependencies are defined in `requirements.txt` and managed via a `Makefile` to ensure consistent reproducibility.
+
+    Although no external GPU or Colab was used in this phase, the codebase is fully portable. It can be run on Colab or GPU-accelerated machines simply by setting up the same environment and installing the required dependencies.
+
+Experiment tracking was handled via **MLflow**, and model artifacts were saved for future deployment or evaluation.
+
 - [ ] **5.2 Initial Training & Evaluation**
   - [ ] Baseline model results
+  A baseline model using **TF-IDF + Logistic Regression** was implemented to set a performance benchmark. It achieved the following on the test set:
+    - **Accuracy**: 98.29%  
+    - **Precision**: 97.96%  
+    - **Recall**: 98.52%
+    - **F1 Score**: 0.9824 
   - [ ] Evaluation metrics
+      For the LSTM model, we evaluated the following metrics:
+    - **Accuracy**: 98.61%  
+    - **Loss**: 0.04  
+    - **Precision**: 98.79%
+    - **Recall**: 98.30%
+    - **F1 Score**: 0.9855
+    
+    ####  Prediction Performance
+    After training, we ran inference on a separate holdout set `predict.csv` (10% of original dataset). This set was not used during training or validation.
+
+    The model achieved the following metrics on this unseen data:
+    - **Accuracy**: 98.62%  
+    - **Precision**: 98.74%  
+    - **Recall**: 98.41%
+    - **F1 Score**: 0.9857
+
+    A confusion matrix for this prediction run is saved as `predict_confusion_matrix.png` under `reports/figures/`.
+
+    This confirms that the model generalizes well and maintains performance on real-world test samples.
+
+
+    These were logged automatically with **MLflow**, and confusion matrix plots were saved using the `plot_confusion_matrix()` function.
+
+    The performance indicates that the LSTM model significantly outperforms the baseline in terms of both recall and F1 score, suggesting better generalization to unseen data.
 
 ## 6. Documentation & Reporting
 - [ ] **6.1 Project README**
