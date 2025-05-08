@@ -4,7 +4,7 @@ A machine learning project for detecting fake and real news articles.
 
 ## 1. Team Information
 - [ ] Team Name: *The* Team
-- [ ] Team Members (Name & Email): Shereen Fahrai (sfahrai@depaul.edu), Liangcai Xie (lxie9@depaul.edu), Garrett Kim (gkim29@depaul.edu)
+- [ ] Team Members (Name & Email): Shereen Fahrai (sfahrai@depaul.edu) and Liangcai Xie (lxie9@depaul.edu)
 - [ ] Course & Section: SE 489 ML Engineering for Production (MLOps), Sections 910 and 930
 
 ## 2. Project Overview
@@ -13,7 +13,7 @@ A machine learning project for detecting fake and real news articles.
 - [ ] Main objectives:
     - Develop a text‑classification model to distinguish fake news from real news with high accuracy.  
     - Establish a reproducible, version‑controlled MLOps pipeline (data, experiment tracking, and deployment).  
-    - Integrate third‑party tools (such as Weights & Biases) for experiment tracking and model management.  
+    - Integrate third‑party tools (such as MLflow) for experiment tracking and model management.  
     - Evaluate the model using accuracy, precision, recall, and F1-score.
     - Prepare for a user‑friendly GUI interface in later phases.
 
@@ -71,13 +71,16 @@ A machine learning project for detecting fake and real news articles.
     ```
 
 ## 6. Contribution Summary
-- [ ] Briefly describe each team member's contributions
+- [ ] Briefly describe each team member's contributions:
+    - Shereen Fahrai: Led data ingestion and preprocessing for Phase 1. Implemented `make_dataset.py` to automate merging, labeling, text cleaning, and stratified splitting of raw data. Set up the data pipeline outputs (`clean_data.csv`, `train.csv`, `predict.csv`). Maintained the `Makefile` with reproducible CLI commands. Contributed to documentation in `README.md` and `PHASE1.md`.
+    - Liangcai Xie: Led model development and environment setup. Refactored the baseline LSTM into a PyTorch module, built `train_model.py` for training, logging, and model saving. Integrated MLflow for experiment tracking, and authored `visualize.py` for plotting training results and created the architecture diagram. Contributed to documentation across PHASE1.md and the README.
+
 
 ## 7. References
 - [ ] List of datasets, frameworks, and major third-party tools used:
     - Dataset: https://www.kaggle.com/datasets/clmentbisaillon/fake-and-real-news-dataset?resource=download
     - Baseline model code adapted from: https://www.kaggle.com/code/yossefmohammed/true-and-fake-news-lstm-accuracy-97-90/notebook
-    - Tools: TensorFlow, Keras, NLTK, Weights & Biases, Ruff, Mypy
+    - Tools: TensorFlow, Keras, NLTK, MLflow, Ruff, Mypy
 
 
 
