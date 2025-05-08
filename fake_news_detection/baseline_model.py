@@ -5,21 +5,16 @@ Performs 5-fold cross-validation and outputs evaluation metrics and a confusion 
 """
 
 import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import scipy.sparse
 import seaborn as sns
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import (
-    accuracy_score,
-    confusion_matrix,
-    f1_score,
-    precision_score,
-    recall_score,
-)
+from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_score, recall_score
 from sklearn.model_selection import StratifiedKFold
-
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -52,7 +47,7 @@ def vectorize_text(texts: np.ndarray) -> TfidfVectorizer:
     return vectorizer.fit_transform(texts)
 
 
-def train_and_evaluate(X_tfidf, y) -> tuple:
+def train_and_evaluate(X_tfidf: scipy.sparse.csr_matrix, y: np.ndarray) -> np.ndarray:
     """
     Train logistic regression with 5-fold cross-validation and evaluate metrics.
 
@@ -71,8 +66,6 @@ def train_and_evaluate(X_tfidf, y) -> tuple:
     f1s = []
 
     conf_matrix_final = None
-    clf_final = None
-
     for fold, (train_idx, test_idx) in enumerate(skf.split(X_tfidf, y)):
         print(f"\nFold {fold + 1}")
 
@@ -100,7 +93,6 @@ def train_and_evaluate(X_tfidf, y) -> tuple:
 
         if fold == skf.get_n_splits() - 1:
             conf_matrix_final = confusion_matrix(y_test, y_pred)
-            clf_final = clf
 
     print("\nAverage across 5 folds:")
     print(f"Accuracy:  {np.mean(accuracies):.4f}")
@@ -108,6 +100,7 @@ def train_and_evaluate(X_tfidf, y) -> tuple:
     print(f"Recall:    {np.mean(recalls):.4f}")
     print(f"F1 Score:  {np.mean(f1s):.4f}")
 
+    assert conf_matrix_final is not None, "Confusion matrix was not computed."
     return conf_matrix_final
 
 
@@ -143,5 +136,8 @@ if __name__ == "__main__":
     conf_matrix = train_and_evaluate(X_tfidf, y)
     plot_confusion_matrix(
         conf_matrix,
-        os.path.join(BASE_DIR, "fake_news_detection/reports/figures/baseline_confusion_matrix.png"),
+        os.path.join(
+            BASE_DIR,
+            "fake_news_detection/reports/figures/baseline_confusion_matrix.png",
+        ),
     )
