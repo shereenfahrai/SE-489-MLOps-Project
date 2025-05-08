@@ -100,12 +100,26 @@ By the conclusion of Phase 1, we will have a clean, well-documented data pipel
 Experiment tracking was handled via **MLflow**, and model artifacts were saved for future deployment or evaluation.
 
 - [ ] **5.2 Initial Training & Evaluation**
-  - [ ] Baseline model results
-  A baseline model using **TF-IDF + Logistic Regression** was implemented to set a performance benchmark. It achieved the following on the test set:
+
+    To establish baseline performance, we first trained a Logistic Regression model using TF-IDF features. We applied 5-fold Stratified Cross-Validation to evaluate its performance across folds and averaged the resulting metrics (see baseline_model.py). This provided a strong reference point for initial model quality.
+
+    Building on this baseline, we then designed and trained a more complex LSTM model using TensorFlow/Keras. While the LSTM model did not apply cross-validation due to its computational cost, we split the training set into training and validation (80/20) during training via the `validation_data` parameter in Keras. This enabled us to monitor model generalization throughout training epochs.
+
+    All training configurations—such as optimizer, dropout, learning rate, and architecture depth—were explicitly logged via MLflow, and model artifacts were saved for later reuse. This ensured that our results were well-documented, reproducible, and traceable for future improvement.
+    
+    
+- [ ] Baseline model results
+      A baseline model using **TF-IDF + Logistic Regression** was implemented to establish a performance benchmark.  
+    To ensure robust evaluation, we used **5-fold Stratified Cross-Validation**, which preserves class distribution in each fold.  
+    For each fold, the model was trained on 80% of the data and validated on the remaining 20%.  
+    We computed **accuracy**, **precision**, **recall**, and **F1 score** for each fold, then averaged the results across folds to obtain a stable performance estimate.
+
+  It achieved the following on the test set:
     - **Accuracy**: 98.29%  
     - **Precision**: 97.96%  
     - **Recall**: 98.52%
     - **F1 Score**: 0.9824 
+    
   - [ ] Evaluation metrics
       For the LSTM model, we evaluated the following metrics:
     - **Accuracy**: 98.61%  
