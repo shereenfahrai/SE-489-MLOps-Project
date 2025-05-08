@@ -123,14 +123,58 @@ Experiment tracking was handled via **MLflow**, and model artifacts were saved f
     - **Recall**: 98.41%
     - **F1 Score**: 0.9857
 
-    A confusion matrix for this prediction run is saved as `predict_confusion_matrix.png` under `reports/figures/`.
+    A confusion matrix for this prediction run is saved as `predict_confusion_matrix.png` under `fake_news_detection/reports/figures/`.
 
     This confirms that the model generalizes well and maintains performance on real-world test samples.
-
 
     These were logged automatically with **MLflow**, and confusion matrix plots were saved using the `plot_confusion_matrix()` function.
 
     The performance indicates that the LSTM model significantly outperforms the baseline in terms of both recall and F1 score, suggesting better generalization to unseen data.
+    
+    #### Model Training Strategy and Hyperparameter Settings
+
+    For both baseline and LSTM models, we split the data into 90% training and 10% inference (predict-only) using stratified sampling to preserve label distribution. The LSTM model was trained on this training set, with 20% further held out as validation during training.
+
+    These settings were initially chosen based on values used in the adapted Kaggle baseline and then retained after observing high validation performance with no major signs of overfitting. MLflow was used to log all parameters and results for reproducibility and later tuning.
+
+    #### Hyperparameter Tuning and Optimization (Planned)
+    We did not yet perform extensive hyperparameter tuning (e.g., grid search or random search), but our code structure supports easy integration of such approaches using libraries like `optuna` or `scikit-learn GridSearchCV`.
+
+    For now, we manually experimented with dropout and learning rate. Our results suggest that the current settings yield near-optimal generalization for this dataset.
+
+    Ensemble methods (e.g., combining LSTM with TF-IDF + Logistic Regression, or voting classifiers) were considered but not yet implemented, as the current LSTM already exceeds the target metrics. However, future extensions could explore:
+        - LSTM + CNN hybrid architectures
+        - BERT-based fine-tuned transformer models
+        - Ensemble voting of classical + neural models
+
+    All training runs were versioned and tracked using MLflow, with model weights and tokenizer objects saved to disk. This ensures that future experiments (e.g., tuning or ensembling) can reproduce and extend from our current baseline.
+        
+        
+- [ ] **5.3 Experiment Tracking and Artifact Logging** 
+    We used **MLflow** to track all training experiments in this project. MLflow provides a centralized way to log:
+
+    - Model hyperparameters:  
+      `epochs`, `embedding_dim`, `lstm_units`, `dropout`, `learning_rate`, and more.
+
+    - Evaluation metrics:  
+      `test_accuracy`, `test_loss`, `test_f1_score`, `precision`.
+
+    - Artifacts:  
+      - Trained model: `lstm_model.h5`  
+      - Tokenizer: `tokenizer.pkl`  
+      - Confusion matrix: `train_confusion_matrix.png`, `predict_confusion_matrix.png`  
+      - Accuracy/loss plots: `accuracy.png`, `loss.png`
+
+    All training runs are stored locally under the `mlruns/` directory. You can launch the experiment UI dashboard using:
+
+    ```bash
+    mlflow ui --port 5000
+    ```
+    Then visit http://localhost:5000 in your browser to view and compare runs.
+
+    Below is a snapshot of our MLflow UI showing a successful run:
+    ![MLflow UI Screenshot](reports/figures/mlflow_ui.png)
+
 
 ## 6. Documentation & Reporting
 - [ ] **6.1 Project README**
