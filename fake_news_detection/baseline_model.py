@@ -9,8 +9,10 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_score, recall_score
 from sklearn.model_selection import StratifiedKFold
 
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Load cleaned data
-df = pd.read_csv("../data/processed/train.csv")
+df = pd.read_csv(os.path.join(BASE_DIR, "data/processed/train.csv"))
 df = df[df["text"].apply(lambda x: isinstance(x, str))]
 
 X = df["text"].values
@@ -59,7 +61,7 @@ for fold, (train_idx, test_idx) in enumerate(skf.split(X_tfidf, y)):
         clf_final = clf  # Save the last fold's model
 
 # Plot confusion matrix of last fold
-os.makedirs("reports/figures", exist_ok=True)
+
 plt.figure(figsize=(6, 5))
 sns.heatmap(
     conf_matrix_final,
@@ -73,7 +75,8 @@ plt.title("Baseline Confusion Matrix (Last Fold)")
 plt.xlabel("Predicted")
 plt.ylabel("Actual")
 plt.tight_layout()
-plt.savefig("reports/figures/baseline_confusion_matrix.png")
+
+plt.savefig(os.path.join(BASE_DIR, "fake_news_detection/reports/figures/baseline_confusion_matrix.png"))
 
 # Output average metrics
 print("\nAverage across 5 folds:")

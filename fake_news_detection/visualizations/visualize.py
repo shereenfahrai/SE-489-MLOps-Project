@@ -1,4 +1,5 @@
 
+import os
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
@@ -6,6 +7,7 @@ from sklearn.metrics import confusion_matrix
 from tensorflow.keras.callbacks import History
 from tensorflow.keras.models import Model
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def plot_accuracy_loss(history: History) -> None:
     """Plot and save training and validation accuracy/loss curves."""
@@ -18,7 +20,7 @@ def plot_accuracy_loss(history: History) -> None:
     plt.ylabel("Accuracy")
     plt.legend(loc="upper left")
     plt.tight_layout()
-    plt.savefig("reports/figures/accuracy.png")
+    plt.savefig(os.path.join(BASE_DIR, "fake_news_detection/reports/figures/accuracy.png"))
     # plt.show()
 
     # Loss plot
@@ -59,4 +61,4 @@ def plot_confusion_matrix(
     plt.ylabel("True")
     plt.title("Confusion Matrix")
     plt.tight_layout()
-    plt.savefig(f"reports/figures/{filename}")
+    plt.savefig(os.path.join(BASE_DIR, f"fake_news_detection/reports/figures/{filename}"))

@@ -5,7 +5,6 @@ import re
 from typing import List, Sequence
 
 import matplotlib.pyplot as plt
-import nltk
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -16,15 +15,18 @@ from nltk.tokenize.treebank import TreebankWordTokenizer
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_score, recall_score
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Load model and tokenizer
-MODEL_PATH = "../models/lstm_model.h5"
-TOKENIZER_PATH = "../models/tokenizer.pkl"
-DATA_PATH = "../data/processed/predict.csv"
+MODEL_PATH = os.path.join(BASE_DIR, "models/lstm_model.h5")
+TOKENIZER_PATH = os.path.join(BASE_DIR, "models/tokenizer.pkl")
+DATA_PATH = os.path.join(BASE_DIR, "data/processed/predict.csv")
 # RESULT_PATH = "../data/processed/predicted_results.csv"
-CONF_MATRIX_PATH = "reports/figures/confusion_matrix_predict.png"
+CONF_MATRIX_PATH = os.path.join(BASE_DIR, "fake_news_detection/reports/figures/predict_confusion_matrix.png")
 
-nltk.data.path.append("./data/raw/")
+# nltk.data.path.append("./data/raw/")
 sent_tokenizer = PunktSentenceTokenizer()
 word_tokenizer = TreebankWordTokenizer()
 lemmatizer = WordNetLemmatizer()
@@ -99,9 +101,6 @@ def predict() -> None:
 
         plot_confusion_matrix(y_true, predicted_labels, CONF_MATRIX_PATH)
         print(f"Confusion matrix saved to {CONF_MATRIX_PATH}")
-
-    # df.to_csv(RESULT_PATH, index=False)
-    # print(f"Prediction complete. Results saved to {RESULT_PATH}")
 
 
 if __name__ == "__main__":
