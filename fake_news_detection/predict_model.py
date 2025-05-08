@@ -1,4 +1,11 @@
 # fake_news_detection/predict_model.py
+"""
+Prediction script for LSTM fake news classifier.
+
+Loads a trained Keras model and tokenizer, applies preprocessing to input text,
+generates predictions, evaluates results if ground truth is available,
+and saves a confusion matrix plot.
+"""
 
 import pickle
 import re
@@ -37,11 +44,34 @@ maxlen = 150  # same as training
 
 # Preprocessing
 def safe_word_tokenize(text: str) -> List[str]:
+    """
+        Tokenizes text into words using NLTK's PunktSentenceTokenizer and TreebankWordTokenizer.
+
+        Args:
+            text (str): Input string.
+
+        Returns:
+            List[str]: List of word tokens.
+    """
     sentences = sent_tokenizer.tokenize(text)
     return [token for sent in sentences for token in word_tokenizer.tokenize(sent)]
 
 
 def process_text(text: str) -> List[str]:
+    """
+        Cleans and preprocesses input text:
+        - Removes non-alphabetic characters
+        - Lowercases text
+        - Tokenizes and lemmatizes
+        - Removes stopwords and short words
+        - Deduplicates tokens while preserving order
+
+        Args:
+            text (str): Raw input text.
+
+        Returns:
+            List[str]: Cleaned and deduplicated word list.
+    """
     text = re.sub(r"[^a-zA-Z\s]", "", text).lower()
     words = safe_word_tokenize(text)
     words = [lemmatizer.lemmatize(w) for w in words if w not in stop_words and len(w) > 3]
@@ -50,6 +80,14 @@ def process_text(text: str) -> List[str]:
 
 
 def plot_confusion_matrix(y_true: Sequence[int], y_pred: Sequence[int], save_path: str) -> None:
+    """
+       Plots and saves a confusion matrix as a heatmap.
+
+       Args:
+           y_true (Sequence[int]): Ground truth labels.
+           y_pred (Sequence[int]): Predicted labels.
+           save_path (str): Path to save the plot.
+    """
     matrix = confusion_matrix(y_true, y_pred)
     plt.figure(figsize=(6, 5))
     sns.heatmap(
@@ -69,6 +107,12 @@ def plot_confusion_matrix(y_true: Sequence[int], y_pred: Sequence[int], save_pat
 
 
 def predict() -> None:
+    """
+        Loads LSTM model and tokenizer, preprocesses the input data,
+        makes predictions, and evaluates results (if labels are present).
+
+        Saves confusion matrix to file if applicable.
+    """
     model = load_model(MODEL_PATH)
     with open(TOKENIZER_PATH, "rb") as f:
         tokenizer = pickle.load(f)
