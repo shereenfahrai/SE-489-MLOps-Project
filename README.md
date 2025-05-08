@@ -19,7 +19,7 @@ A machine learning project for detecting fake and real news articles.
 
 
 ## 3. Project Architecture Diagram
-- [ ] Insert or link to your architecture diagram (e.g., draw.io, PNG, etc.)
+![Architecture Diagram](reports/figures/ml_pipeline_architecture.png)
 
 ## 4. Phase Deliverables
 - [ ] [PHASE1.md](./PHASE1.md): Project Design & Model Development
@@ -50,7 +50,18 @@ A machine learning project for detecting fake and real news articles.
     ``` 
         make data
     ```
-
+    ### Run Baseline Model
+    ``` 
+        make baseline_model
+    ```
+    ### Train Model (LSTM)
+    ``` 
+        make train_model
+    ```
+    ### Run Predictions
+    ``` 
+        make predict_model
+    ```
     ### Check Code Quality
     ```
         make lint
