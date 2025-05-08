@@ -7,6 +7,7 @@ This module includes:
 """
 
 import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
@@ -44,23 +45,23 @@ def plot_accuracy_loss(history: History) -> None:
     plt.ylabel("Loss")
     plt.legend(loc="upper left")
     plt.tight_layout()
-    plt.savefig("reports/figures/loss.png")
+    plt.savefig(os.path.join(BASE_DIR, "reports/figures/loss.png"))
 
 
 def plot_confusion_matrix(
-        model: Model,
-        X_test: np.ndarray,
-        y_test_one_hot: np.ndarray,
-        filename: str = "train_confusion_matrix.png",
+    model: Model,
+    X_test: np.ndarray,
+    y_test_one_hot: np.ndarray,
+    filename: str = "train_confusion_matrix.png",
 ) -> None:
     """
-        Generate and save confusion matrix heatmap from model predictions.
+    Generate and save confusion matrix heatmap from model predictions.
 
-        Args:
-            model (Model): Trained Keras model.
-            X_test (np.ndarray): Test feature set.
-            y_test_one_hot (np.ndarray): One-hot encoded true labels.
-            filename (str): Output file name for the plot image.
+    Args:
+        model (Model): Trained Keras model.
+        X_test (np.ndarray): Test feature set.
+        y_test_one_hot (np.ndarray): One-hot encoded true labels.
+        filename (str): Output file name for the plot image.
     """
     y_pred_probs = model.predict(X_test)
     y_pred_labels = np.argmax(y_pred_probs, axis=1)

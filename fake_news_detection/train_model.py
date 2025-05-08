@@ -9,6 +9,7 @@ This script:
 - Saves model, tokenizer, and performance metrics
 """
 
+import os
 import pickle
 import re
 from typing import List, Tuple, Union
@@ -32,7 +33,6 @@ from tensorflow.keras.utils import to_categorical
 
 from fake_news_detection.models.model import build_lstm_model
 from fake_news_detection.visualizations.visualize import plot_accuracy_loss, plot_confusion_matrix
-import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -49,13 +49,13 @@ stop_words = set(stopwords.words("english"))
 
 def safe_word_tokenize(text: str) -> List[str]:
     """
-        Tokenizes input text into word-level tokens.
+    Tokenizes input text into word-level tokens.
 
-        Args:
-            text (str): Raw input text.
+    Args:
+        text (str): Raw input text.
 
-        Returns:
-            List[str]: List of word tokens.
+    Returns:
+        List[str]: List of word tokens.
     """
     sentences = sent_tokenizer.tokenize(text)
     return [token for sent in sentences for token in word_tokenizer.tokenize(sent)]
@@ -63,18 +63,18 @@ def safe_word_tokenize(text: str) -> List[str]:
 
 def process_text(text: str) -> List[str]:
     """
-        Cleans and processes raw text:
-        - Removes non-alphabetic characters
-        - Lowercases
-        - Tokenizes and lemmatizes
-        - Removes stopwords and short tokens
-        - Deduplicates while preserving order
+    Cleans and processes raw text:
+    - Removes non-alphabetic characters
+    - Lowercases
+    - Tokenizes and lemmatizes
+    - Removes stopwords and short tokens
+    - Deduplicates while preserving order
 
-        Args:
-            text (str): Input text.
+    Args:
+        text (str): Input text.
 
-        Returns:
-            List[str]: Preprocessed and deduplicated word tokens.
+    Returns:
+        List[str]: Preprocessed and deduplicated word tokens.
     """
     text = re.sub(r"[^a-zA-Z\s]", "", text).lower()
     words = safe_word_tokenize(text)
@@ -85,10 +85,10 @@ def process_text(text: str) -> List[str]:
 
 def load_cleaned_data() -> Tuple[List[str], List[Union[str, int]]]:
     """
-       Loads cleaned training data from CSV file.
+    Loads cleaned training data from CSV file.
 
-       Returns:
-           Tuple[List[str], List[Union[str, int]]]: List of texts and corresponding labels.
+    Returns:
+        Tuple[List[str], List[Union[str, int]]]: List of texts and corresponding labels.
     """
     data_path = os.path.join(BASE_DIR, "data/processed/train.csv")
     df = pd.read_csv(data_path)
@@ -98,12 +98,12 @@ def load_cleaned_data() -> Tuple[List[str], List[Union[str, int]]]:
 
 def train() -> None:
     """
-        Main training routine:
-        - Loads data and applies preprocessing
-        - Splits into training and test sets
-        - Trains LSTM model and logs parameters/metrics with MLflow
-        - Saves trained model and tokenizer
-        - Generates accuracy/loss and confusion matrix visualizations
+    Main training routine:
+    - Loads data and applies preprocessing
+    - Splits into training and test sets
+    - Trains LSTM model and logs parameters/metrics with MLflow
+    - Saves trained model and tokenizer
+    - Generates accuracy/loss and confusion matrix visualizations
     """
 
     texts, y = load_cleaned_data()
