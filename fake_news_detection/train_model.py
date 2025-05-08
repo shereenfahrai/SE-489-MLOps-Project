@@ -1,4 +1,13 @@
-# fake_news_detection/train_model.py
+"""
+Training script for LSTM-based fake news classifier.
+
+This script:
+- Loads cleaned text data
+- Applies tokenization and preprocessing
+- Trains an LSTM model using Keras
+- Logs training process with MLflow
+- Saves model, tokenizer, and performance metrics
+"""
 
 import pickle
 import re
@@ -39,11 +48,34 @@ stop_words = set(stopwords.words("english"))
 
 
 def safe_word_tokenize(text: str) -> List[str]:
+    """
+        Tokenizes input text into word-level tokens.
+
+        Args:
+            text (str): Raw input text.
+
+        Returns:
+            List[str]: List of word tokens.
+    """
     sentences = sent_tokenizer.tokenize(text)
     return [token for sent in sentences for token in word_tokenizer.tokenize(sent)]
 
 
 def process_text(text: str) -> List[str]:
+    """
+        Cleans and processes raw text:
+        - Removes non-alphabetic characters
+        - Lowercases
+        - Tokenizes and lemmatizes
+        - Removes stopwords and short tokens
+        - Deduplicates while preserving order
+
+        Args:
+            text (str): Input text.
+
+        Returns:
+            List[str]: Preprocessed and deduplicated word tokens.
+    """
     text = re.sub(r"[^a-zA-Z\s]", "", text).lower()
     words = safe_word_tokenize(text)
     words = [lemmatizer.lemmatize(w) for w in words if w not in stop_words and len(w) > 3]
@@ -52,6 +84,12 @@ def process_text(text: str) -> List[str]:
 
 
 def load_cleaned_data() -> Tuple[List[str], List[Union[str, int]]]:
+    """
+       Loads cleaned training data from CSV file.
+
+       Returns:
+           Tuple[List[str], List[Union[str, int]]]: List of texts and corresponding labels.
+    """
     data_path = os.path.join(BASE_DIR, "data/processed/train.csv")
     df = pd.read_csv(data_path)
     df = df[df["text"].apply(lambda x: isinstance(x, str))]
@@ -59,6 +97,15 @@ def load_cleaned_data() -> Tuple[List[str], List[Union[str, int]]]:
 
 
 def train() -> None:
+    """
+        Main training routine:
+        - Loads data and applies preprocessing
+        - Splits into training and test sets
+        - Trains LSTM model and logs parameters/metrics with MLflow
+        - Saves trained model and tokenizer
+        - Generates accuracy/loss and confusion matrix visualizations
+    """
+
     texts, y = load_cleaned_data()
     cleaned_texts = [process_text(text) for text in texts]
 
