@@ -6,7 +6,6 @@ from typing import List, Tuple, Union
 
 import mlflow
 import mlflow.tensorflow
-import nltk
 import numpy as np
 import pandas as pd
 
@@ -24,12 +23,15 @@ from tensorflow.keras.utils import to_categorical
 
 from fake_news_detection.models.model import build_lstm_model
 from fake_news_detection.visualizations.visualize import plot_accuracy_loss, plot_confusion_matrix
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # MLflow setup
 mlflow.set_experiment("fake-news-lstm")
 print("MLflow experiment:", mlflow.get_experiment_by_name("fake-news-lstm"))
 
-nltk.data.path.append("./data/raw/")
+# nltk.data.path.append("./data/raw/")
 sent_tokenizer = PunktSentenceTokenizer()
 word_tokenizer = TreebankWordTokenizer()
 lemmatizer = WordNetLemmatizer()
@@ -50,7 +52,8 @@ def process_text(text: str) -> List[str]:
 
 
 def load_cleaned_data() -> Tuple[List[str], List[Union[str, int]]]:
-    df = pd.read_csv("../data/processed/train.csv")
+    data_path = os.path.join(BASE_DIR, "data/processed/train.csv")
+    df = pd.read_csv(data_path)
     df = df[df["text"].apply(lambda x: isinstance(x, str))]
     return df["text"].tolist(), df["label"].tolist()
 
@@ -125,10 +128,10 @@ def train() -> None:
         mlflow.log_metric("test_recall", recall)
         mlflow.log_metric("test_f1_score", f1)
 
-        model.save("../models/lstm_model.h5")
+        model.save(os.path.join(BASE_DIR, "models/lstm_model.h5"))
         mlflow.tensorflow.log_model(model, artifact_path="model")
 
-        with open("../models/tokenizer.pkl", "wb") as f:
+        with open(os.path.join(BASE_DIR, "models/tokenizer.pkl"), "wb") as f:
             pickle.dump(tokenizer, f)
 
         plot_accuracy_loss(history)

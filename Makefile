@@ -47,6 +47,18 @@ clean:
 data:
 	python $(PROJECT_NAME)/data/make_dataset.py
 
+## Train the LSTM model
+train_model:
+	PYTHONPATH=. python fake_news_detection/train_model.py
+
+## Run prediction on held-out data
+predict_model:
+	PYTHONPATH=. python fake_news_detection/predict_model.py
+
+## Run baseline logistic regression model
+baseline_model:
+	PYTHONPATH=. python fake_news_detection/baseline_model.py
+
 #################################################################################
 # Documentation RULES                                                           #
 #################################################################################
