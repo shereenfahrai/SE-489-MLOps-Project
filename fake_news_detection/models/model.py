@@ -4,6 +4,8 @@ model.py
 Defines the LSTM-based text classification model.
 """
 
+from typing import Optional
+
 from tensorflow.keras.layers import LSTM, Dense, Dropout, Embedding, GlobalMaxPooling1D, Input
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
@@ -11,11 +13,12 @@ from tensorflow.keras.optimizers import Adam
 
 def build_lstm_model(
     vocab_size: int,
-    maxlen: int = 150,
-    embed_dim: int = 100,
-    lstm_units: int = 150,
-    dropout_rate: float = 0.5,
-    learning_rate: float = 0.0001,
+    maxlen: int,
+    embed_dim: int,
+    lstm_units: int,
+    dropout_rate: float,
+    learning_rate: float,
+    dense_units: Optional[int] = 64,
 ) -> Model:
     """
     Builds an LSTM-based text classification model.
@@ -37,7 +40,7 @@ def build_lstm_model(
     x = LSTM(lstm_units, return_sequences=True, name="lstm")(x)
     x = Dropout(dropout_rate, name="dropout2")(x)
     x = GlobalMaxPooling1D(name="global_max_pooling")(x)
-    x = Dense(64, activation="relu", name="dense1")(x)
+    x = Dense(dense_units, activation="relu", name="dense1")(x)
     x = Dropout(dropout_rate, name="dropout3")(x)
     outputs = Dense(2, activation="softmax", name="output")(x)
 

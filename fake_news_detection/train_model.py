@@ -9,21 +9,25 @@ This script:
 - Saves model, tokenizer, and performance metrics
 """
 
+import logging
 import os
 import pickle
 import re
 from typing import List, Tuple, Union
 
+import hydra
 import mlflow
 import mlflow.tensorflow
 import numpy as np
 import pandas as pd
+import psutil
 
 # Tokenization setup
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize.punkt import PunktSentenceTokenizer
 from nltk.tokenize.treebank import TreebankWordTokenizer
+from omegaconf import DictConfig
 from sklearn.metrics import f1_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
@@ -34,17 +38,34 @@ from tensorflow.keras.utils import to_categorical
 from fake_news_detection.models.model import build_lstm_model
 from fake_news_detection.visualizations.visualize import plot_accuracy_loss, plot_confusion_matrix
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[logging.StreamHandler()],
+)
+logger = logging.getLogger(__name__)
 
-# MLflow setup
-mlflow.set_experiment("fake-news-lstm")
-print("MLflow experiment:", mlflow.get_experiment_by_name("fake-news-lstm"))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # nltk.data.path.append("./data/raw/")
 sent_tokenizer = PunktSentenceTokenizer()
 word_tokenizer = TreebankWordTokenizer()
 lemmatizer = WordNetLemmatizer()
 stop_words = set(stopwords.words("english"))
+
+
+def monitor_resources(step_name: str = "unspecified") -> None:
+    """
+    Logs current system resource usage (CPU, memory) to logger and MLflow.
+
+    Args:
+        step_name (str): Description of where this monitoring is called.
+    """
+    cpu = psutil.cpu_percent(interval=1)
+    mem = psutil.virtual_memory().percent
+    logger.info(f"[Resource @ {step_name}] CPU Usage: {cpu:.2f}%, Memory Usage: {mem:.2f}%")
+    mlflow.log_metric(f"{step_name}_cpu_usage", cpu)
+    mlflow.log_metric(f"{step_name}_mem_usage", mem)
 
 
 def safe_word_tokenize(text: str) -> List[str]:
@@ -96,7 +117,12 @@ def load_cleaned_data() -> Tuple[List[str], List[Union[str, int]]]:
     return df["text"].tolist(), df["label"].tolist()
 
 
-def train() -> None:
+@hydra.main(config_path="../", config_name="config")
+def train(cfg: DictConfig) -> None:
+    train_with_cfg(cfg)
+
+
+def train_with_cfg(cfg: DictConfig) -> None:
     """
     Main training routine:
     - Loads data and applies preprocessing
@@ -105,6 +131,10 @@ def train() -> None:
     - Saves trained model and tokenizer
     - Generates accuracy/loss and confusion matrix visualizations
     """
+
+    # MLflow setup
+    mlflow.set_experiment("fake-news")
+    logger.info("MLflow experiment set to 'fake-news'")
 
     texts, y = load_cleaned_data()
     cleaned_texts = [process_text(text) for text in texts]
@@ -116,33 +146,32 @@ def train() -> None:
     word_index = tokenizer.word_index
     vocab_size = len(word_index)
 
-    maxlen = 150
     X_train_seq = tokenizer.texts_to_sequences(X_train)
     X_test_seq = tokenizer.texts_to_sequences(X_test)
 
-    X_train_pad = pad_sequences(X_train_seq, maxlen=maxlen)
-    X_test_pad = pad_sequences(X_test_seq, maxlen=maxlen)
+    X_train_pad = pad_sequences(X_train_seq, maxlen=cfg.train.maxlen)
+    X_test_pad = pad_sequences(X_test_seq, maxlen=cfg.train.maxlen)
 
     label_encoder = LabelEncoder()
     y_train_enc = to_categorical(label_encoder.fit_transform(y_train))
     y_test_enc = to_categorical(label_encoder.transform(y_test))
 
     with mlflow.start_run():
+        monitor_resources("before_model_build")
+
         model = build_lstm_model(
             vocab_size=vocab_size,
-            maxlen=maxlen,
-            embed_dim=100,
-            lstm_units=150,
-            dropout_rate=0.5,
-            learning_rate=0.0001,
+            maxlen=cfg.train.maxlen,
+            embed_dim=cfg.train.embed_dim,
+            lstm_units=cfg.train.lstm_units,
+            dropout_rate=cfg.train.dropout,
+            learning_rate=cfg.train.learning_rate,
         )
 
-        mlflow.log_param("epochs", 15)
-        mlflow.log_param("maxlen", maxlen)
-        mlflow.log_param("embedding_dim", 100)
-        mlflow.log_param("lstm_units", 150)
-        mlflow.log_param("dropout", 0.5)
-        mlflow.log_param("learning_rate", 0.0001)
+        for key, value in cfg.train.items():
+            mlflow.log_param(key, value)
+        mlflow.set_tag("model_type", "LSTM")
+        mlflow.set_tag("framework", "TensorFlow")
 
         history = model.fit(
             X_train_pad,
@@ -151,12 +180,15 @@ def train() -> None:
             validation_data=(X_test_pad, y_test_enc),
             verbose=1,
         )
+        monitor_resources("after_training")
 
         loss, accuracy = model.evaluate(X_test_pad, y_test_enc)
         mlflow.log_metric("test_loss", loss)
         mlflow.log_metric("test_accuracy", accuracy)
-        print(f"Test Loss: {loss:.4f}")
-        print(f"Test Accuracy: {accuracy:.4f}")
+        logger.info(f"Test Loss: {loss:.4f}")
+        logger.info(f"Test Accuracy: {accuracy:.4f}")
+
+        monitor_resources("after_evaluation")
 
         # Predict & compute precision / recall / F1
         y_pred_probs = model.predict(X_test_pad)
@@ -167,9 +199,9 @@ def train() -> None:
         recall = recall_score(y_true, y_pred)
         f1 = f1_score(y_true, y_pred)
 
-        print(f"Precision: {precision:.4f}")
-        print(f"Recall: {recall:.4f}")
-        print(f"F1 Score: {f1:.4f}")
+        logger.info(f"Precision: {precision:.4f}")
+        logger.info(f"Recall: {recall:.4f}")
+        logger.info(f"F1 Score: {f1:.4f}")
 
         mlflow.log_metric("test_precision", precision)
         mlflow.log_metric("test_recall", recall)
