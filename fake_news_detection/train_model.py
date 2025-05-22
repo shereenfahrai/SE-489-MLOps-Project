@@ -21,6 +21,7 @@ import mlflow.tensorflow
 import numpy as np
 import pandas as pd
 import psutil
+# import pdb
 
 # Tokenization setup
 from nltk.corpus import stopwords
@@ -156,6 +157,9 @@ def train_with_cfg(cfg: DictConfig) -> None:
     y_train_enc = to_categorical(label_encoder.fit_transform(y_train))
     y_test_enc = to_categorical(label_encoder.transform(y_test))
 
+    # pdb.set_trace()  # DEBUG: inspect preprocessed data and label shapes
+
+
     with mlflow.start_run():
         monitor_resources("before_model_build")
 
@@ -167,6 +171,8 @@ def train_with_cfg(cfg: DictConfig) -> None:
             dropout_rate=cfg.train.dropout,
             learning_rate=cfg.train.learning_rate,
         )
+
+        # pdb.set_trace()  # DEBUG: inspect model summary and input tensors
 
         for key, value in cfg.train.items():
             mlflow.log_param(key, value)
@@ -180,8 +186,9 @@ def train_with_cfg(cfg: DictConfig) -> None:
             validation_data=(X_test_pad, y_test_enc),
             verbose=1,
         )
-        monitor_resources("after_training")
+        # pdb.set_trace()  # DEBUG: inspect training history
 
+        monitor_resources("after_training")
         loss, accuracy = model.evaluate(X_test_pad, y_test_enc)
         mlflow.log_metric("test_loss", loss)
         mlflow.log_metric("test_accuracy", accuracy)
