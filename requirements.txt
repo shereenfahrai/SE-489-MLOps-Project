@@ -53,7 +53,7 @@ nodeenv==1.9.1
 numpy==2.1.3
 opt_einsum==3.4.0
 optree==0.15.0
-packaging==25.0
+packaging<25
 paginate==0.5.7
 pandas==2.2.3
 pathspec==0.12.1

@@ -37,6 +37,14 @@ CONF_MATRIX_PATH = os.path.join(BASE_DIR, "fake_news_detection/reports/figures/p
 sent_tokenizer = PunktSentenceTokenizer()
 word_tokenizer = TreebankWordTokenizer()
 lemmatizer = WordNetLemmatizer()
+
+# Download NLTK resources
+import nltk
+nltk.download("stopwords", quiet=True)
+nltk.download("punkt", quiet=True)
+nltk.download("punkt_tab", quiet=True)
+nltk.download("wordnet", quiet=True)
+
 stop_words = set(stopwords.words("english"))
 
 maxlen = 150  # same as training

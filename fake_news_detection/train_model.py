@@ -44,6 +44,14 @@ print("MLflow experiment:", mlflow.get_experiment_by_name("fake-news-lstm"))
 sent_tokenizer = PunktSentenceTokenizer()
 word_tokenizer = TreebankWordTokenizer()
 lemmatizer = WordNetLemmatizer()
+
+# Download NLTK resources
+import nltk
+nltk.download("stopwords", quiet=True)
+nltk.download("punkt", quiet=True)
+nltk.download("punkt_tab", quiet=True)
+nltk.download("wordnet", quiet=True)
+
 stop_words = set(stopwords.words("english"))
 
 
