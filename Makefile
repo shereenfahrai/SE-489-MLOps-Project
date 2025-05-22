@@ -49,7 +49,7 @@ data:
 
 ## Train the LSTM model
 train_model:
-	PYTHONPATH=. python fake_news_detection/train_model.py
+	PYTHONPATH=. python fake_news_detection/train_model.py $(ARGS)
 
 ## Run prediction on held-out data
 predict_model:
