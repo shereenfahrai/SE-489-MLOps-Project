@@ -137,7 +137,10 @@ A machine learning project for detecting fake and real news articles.
         - Integrated MLflow for experiment tracking, and authored `visualize.py` for plotting training results
         - Created the architecture diagram. 
         - Contributed to documentation across `README.md` and `PHASE1.md`.
-
+        - Enhanced model training pipeline with profiling, logging, and resource monitoring.
+        - Integrated `cProfile`, `psutil`, and `logger` for runtime diagnostics.
+        - Applied Hydra for flexible config management and CLI overrides.
+        - Documented Phase 2 implementation in `PHASE2.md`, including debugging, profiling, logging, MLflow, and Hydra.
 
 ## 7. References
 - [ ] List of datasets, frameworks, and major third-party tools used:
