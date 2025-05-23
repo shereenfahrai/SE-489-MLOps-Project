@@ -4,6 +4,7 @@ Baseline training script for fake news classification using TF-IDF and Logistic 
 Performs 5-fold cross-validation and outputs evaluation metrics and a confusion matrix plot.
 """
 
+import logging
 import os
 
 import matplotlib.pyplot as plt
@@ -17,7 +18,12 @@ from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precisio
 from sklearn.model_selection import StratifiedKFold
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[logging.StreamHandler()],
+)
+logger = logging.getLogger(__name__)
 
 def load_data(path: str) -> pd.DataFrame:
     """
@@ -67,7 +73,7 @@ def train_and_evaluate(X_tfidf: scipy.sparse.csr_matrix, y: np.ndarray) -> np.nd
 
     conf_matrix_final = None
     for fold, (train_idx, test_idx) in enumerate(skf.split(X_tfidf, y)):
-        print(f"\nFold {fold + 1}")
+        logger.info(f"\nFold {fold + 1}")
 
         X_train, X_test = X_tfidf[train_idx], X_tfidf[test_idx]
         y_train, y_test = y[train_idx], y[test_idx]
@@ -81,10 +87,10 @@ def train_and_evaluate(X_tfidf: scipy.sparse.csr_matrix, y: np.ndarray) -> np.nd
         recall = recall_score(y_test, y_pred)
         f1 = f1_score(y_test, y_pred)
 
-        print(f"Accuracy:  {acc:.4f}")
-        print(f"Precision: {precision:.4f}")
-        print(f"Recall:    {recall:.4f}")
-        print(f"F1 Score:  {f1:.4f}")
+        logger.info(f"Accuracy:  {acc:.4f}")
+        logger.info(f"Precision: {precision:.4f}")
+        logger.info(f"Recall:    {recall:.4f}")
+        logger.info(f"F1 Score:  {f1:.4f}")
 
         accuracies.append(acc)
         precisions.append(precision)
@@ -94,11 +100,11 @@ def train_and_evaluate(X_tfidf: scipy.sparse.csr_matrix, y: np.ndarray) -> np.nd
         if fold == skf.get_n_splits() - 1:
             conf_matrix_final = confusion_matrix(y_test, y_pred)
 
-    print("\nAverage across 5 folds:")
-    print(f"Accuracy:  {np.mean(accuracies):.4f}")
-    print(f"Precision: {np.mean(precisions):.4f}")
-    print(f"Recall:    {np.mean(recalls):.4f}")
-    print(f"F1 Score:  {np.mean(f1s):.4f}")
+    logger.info("\nAverage across 5 folds:")
+    logger.info(f"Accuracy:  {np.mean(accuracies):.4f}")
+    logger.info(f"Precision: {np.mean(precisions):.4f}")
+    logger.info(f"Recall:    {np.mean(recalls):.4f}")
+    logger.info(f"F1 Score:  {np.mean(f1s):.4f}")
 
     assert conf_matrix_final is not None, "Confusion matrix was not computed."
     return conf_matrix_final
