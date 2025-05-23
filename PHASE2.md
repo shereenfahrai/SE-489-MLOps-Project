@@ -23,17 +23,17 @@
       - **Issue:** When building the model, an error was raised due to a mismatch between the expected input shape and the padded sequence dimensions.
       - **Solution:** Inserted `pdb.set_trace()` before model construction to inspect `X_train_pad.shape` and adjusted the `maxlen` parameter accordingly.
 
-    - *Scenario 2: Labels not being encoded properly*
-      - **Issue:** Model training failed due to incorrectly shaped label arrays.
-      - **Solution:** Used `pdb.set_trace()` to inspect `y_train_enc` right after `LabelEncoder` and `to_categorical` conversion.
+  - *Scenario 2: Labels not being encoded properly*
+    - **Issue:** Model training failed due to incorrectly shaped label arrays.
+    - **Solution:** Used `pdb.set_trace()` to inspect `y_train_enc` right after `LabelEncoder` and `to_categorical` conversion.
 
-    - *Scenario 3: Inconsistent token counts between train/test*
-      - **Issue:** Vocabulary size and tokenizer mappings were inconsistent due to incorrect tokenizer usage across splits.
-      - **Solution:** Logged `len(tokenizer.word_index)` and verified consistency with logger output.
+  - *Scenario 3: Inconsistent token counts between train/test*
+    - **Issue:** Vocabulary size and tokenizer mappings were inconsistent due to incorrect tokenizer usage across splits.
+    - **Solution:** Logged `len(tokenizer.word_index)` and verified consistency with logger output.
 
-    - *Logger usage for passive debugging:*
-      - Informative logs were inserted using `logger.info(...)` at key points such as data loading, preprocessing, model training, evaluation, and saving artifacts.
-      - These logs helped trace the full pipeline execution without pausing execution flow.
+  - *Logger usage for passive debugging:*
+    - Informative logs were inserted using `logger.info(...)` at key points such as data loading, preprocessing, model training, evaluation, and saving artifacts.
+    - These logs helped trace the full pipeline execution without pausing execution flow.
 
   - **Sample Resource Logs:**
     The following logs were recorded during different stages of model training using `psutil` and `logger`:

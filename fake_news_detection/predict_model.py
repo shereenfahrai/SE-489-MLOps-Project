@@ -7,6 +7,7 @@ generates predictions, evaluates results if ground truth is available,
 and saves a confusion matrix plot.
 """
 
+import logging
 import os
 import pickle
 import re
@@ -24,6 +25,12 @@ from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precisio
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[logging.StreamHandler()],
+)
+logger = logging.getLogger(__name__)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Load model and tokenizer
@@ -138,13 +145,13 @@ def predict() -> None:
         recall = recall_score(y_true, predicted_labels)
         f1 = f1_score(y_true, predicted_labels)
 
-        print(f"Prediction Accuracy: {acc:.4f}")
-        print(f"Precision: {precision:.4f}")
-        print(f"Recall: {recall:.4f}")
-        print(f"F1 Score: {f1:.4f}")
+        logger.info(f"Prediction Accuracy: {acc:.4f}")
+        logger.info(f"Precision: {precision:.4f}")
+        logger.info(f"Recall: {recall:.4f}")
+        logger.info(f"F1 Score: {f1:.4f}")
 
         plot_confusion_matrix(y_true, predicted_labels, CONF_MATRIX_PATH)
-        print(f"Confusion matrix saved to {CONF_MATRIX_PATH}")
+        logger.info(f"Confusion matrix saved to {CONF_MATRIX_PATH}")
 
 
 if __name__ == "__main__":
