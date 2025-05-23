@@ -2,9 +2,11 @@
 
 ## 1. Containerization
 - [ ] **1.1 Dockerfile**
-  - [ ] A `Dockerfile` has been created and tested successfully
-  - [ ] The container runs training script and outputs model artifact (`my_trained_model.pt`) to mounted host directory
-  - [ ] Build and run instructions are documented in detail in main `README.md`
+  - [ ] A Dockerfile has been created and tested successfully for the training container.
+  - [ ] The container runs the training script and saves the trained model (`lstm_model.h5`) and tokenizer (`tokenizer.pkl`) to the mounted `models/` directory on the host machine.
+  - [ ] A separate Dockerfile has been created and tested for the prediction container.
+  - [ ] The container loads the trained model and tokenizer from the mounted `models/` directory, runs inference on the test set, and outputs evaluation metrics (accuracy, precision, recall, F1-score).  
+  - [ ] Build and run instructions are documented in detail in the main `README.md`.
 - [ ] **1.2 Environment Consistency**
   - [ ] All project dependencies (including Python packages from `requirements.txt`) are included in Docker image
   - [ ] The container ensures reproducible training environments across different machines!
