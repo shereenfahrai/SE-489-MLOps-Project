@@ -2,10 +2,12 @@
 
 ## 1. Containerization
 - [ ] **1.1 Dockerfile**
-  - [ ] Dockerfile created and tested
-  - [ ] Instructions for building and running the container
+  - [ ] A `Dockerfile` has been created and tested successfully
+  - [ ] The container runs training script and outputs model artifact (`my_trained_model.pt`) to mounted host directory
+  - [ ] Build and run instructions are documented in detail in main `README.md`
 - [ ] **1.2 Environment Consistency**
-  - [ ] All dependencies included in the container
+  - [ ] All project dependencies (including Python packages from `requirements.txt`) are included in Docker image
+  - [ ] The container ensures reproducible training environments across different machines!
 
 ## 2. Monitoring & Debugging
 

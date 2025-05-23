@@ -95,6 +95,10 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# Shared models
+models/*.h5
+models/*.pkl
+
 # IPython
 profile_default/
 ipython_config.py
