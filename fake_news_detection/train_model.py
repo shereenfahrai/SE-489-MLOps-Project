@@ -126,7 +126,9 @@ def load_cleaned_data() -> Tuple[List[str], List[Union[str, int]]]:
     return df["text"].tolist(), df["label"].tolist()
 
 
-@hydra.main(config_path="../", config_name="config")
+@hydra.main(config_path="../config", config_name="config")
+
+
 def train(cfg: DictConfig) -> None:
     train_with_cfg(cfg)
 
@@ -190,7 +192,7 @@ def train_with_cfg(cfg: DictConfig) -> None:
         history = model.fit(
             X_train_pad,
             y_train_enc,
-            epochs=15,
+            epochs=cfg.epochs,
             validation_data=(X_test_pad, y_test_enc),
             verbose=1,
         )

@@ -15,6 +15,8 @@ COPY pyproject.toml .
 COPY Makefile .
 COPY fake_news_detection/ fake_news_detection/
 COPY data/ data/
+COPY config/ config/
+
 
 # Install Python dependencies
 RUN pip install -r requirements.txt --no-cache-dir
