@@ -1,0 +1,40 @@
+name: Continuous ML Evaluation with CML
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  evaluate-model:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run evaluation
+        run: |
+          python fake_news_detection/predict_model.py
+
+      - name: Generate report
+        run: |
+          echo "## 🧪 Model Evaluation Results" > report.md
+          echo "" >> report.md
+          echo "![](fake_news_detection/reports/figures/predict_confusion_matrix.png)" >> report.md
+          echo "" >> report.md
+          echo "Confusion Matrix for the latest model on prediction set." >> report.md
+
+      - name: Post report to PR
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cml comment report.md
