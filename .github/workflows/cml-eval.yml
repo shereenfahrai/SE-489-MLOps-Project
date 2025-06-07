@@ -2,7 +2,8 @@ name: Continuous ML Evaluation with CML
 
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   evaluate-model:
@@ -27,14 +28,15 @@ jobs:
 
       - name: Generate report
         run: |
-          echo "## 🧪 Model Evaluation Results" > report.md
+          echo "## Model Evaluation Results" > report.md
           echo "" >> report.md
           echo "![](fake_news_detection/reports/figures/predict_confusion_matrix.png)" >> report.md
           echo "" >> report.md
           echo "Confusion Matrix for the latest model on prediction set." >> report.md
 
-      - name: Post report to PR
+      - name: Post to PR with CML
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cml comment report.md
+          curl -sSL https://get.cml.dev | sh
+          ./bin/cml comment report.md
