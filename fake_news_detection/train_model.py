@@ -127,7 +127,7 @@ def load_cleaned_data() -> Tuple[List[str], List[Union[str, int]]]:
     Returns:
         Tuple[List[str], List[Union[str, int]]]: List of texts and corresponding labels.
     """
-    url = "https://storage.googleapis.com/mlops_fake_news/train.csv"
+    url = "https://storage.googleapis.com/mlops_fake_news/clean_data.csv"
 
     # data_path = os.path.join(BASE_DIR, "data/processed/train.csv")
     df = pd.read_csv(url)
