@@ -200,7 +200,7 @@ def train_with_cfg(cfg: DictConfig) -> None:
         history = model.fit(
             X_train_pad,
             y_train_enc,
-            epochs=cfg.epochs,
+            epochs=cfg.train.epochs,
             validation_data=(X_test_pad, y_test_enc),
             verbose=1,
         )
