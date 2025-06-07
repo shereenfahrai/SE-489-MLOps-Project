@@ -28,6 +28,8 @@ jobs:
       run: |
         gcloud auth configure-docker us-central1-docker.pkg.dev
 
+
+     ## === deploy FastAPI API ===
     - name: Build Docker image
       run: |
         docker build -f fastapi_app.dockerfile \
@@ -44,3 +46,22 @@ jobs:
           --platform=managed \
           --region=us-central1 \
           --allow-unauthenticated
+
+    ## === deploy Train Model ===
+    - name: Build TrainModel Docker image
+      run: |
+        docker build -f dockerfiles/train_model.dockerfile \
+          -t us-central1-docker.pkg.dev/fake-news-api-project/fastapi-repo/train-service .
+
+    - name: Push TrainModel Docker image
+      run: |
+        docker push us-central1-docker.pkg.dev/fake-news-api-project/fastapi-repo/train-service
+
+    - name: Deploy TrainModel to Cloud Run
+      run: |
+        gcloud run deploy train-service \
+          --image=us-central1-docker.pkg.dev/fake-news-api-project/fastapi-repo/train-service \
+          --platform=managed \
+          --region=us-central1 \
+          --no-allow-unauthenticated \
+          --memory=2Gi
