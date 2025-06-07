@@ -25,6 +25,7 @@
     - `ruff`
     - `mypy`
   -  Installed pre-commit locally and verified the hooks trigger on each commit to ensure consistent code quality.
+  -  ```pre-commit run --all-files```
 
 
 ## 2. Continuous Docker Building & CML
@@ -53,7 +54,34 @@
   -  Successfully pushed Docker image to `fastapi-repo` in `us-central1`.
 - [ ] **3.2 Custom Training Job on GCP**
   - [ ] Vertex AI/Compute Engine job setup and documentation
+  -  Implemented training logic in `train_model.py` and containerized it using `dockerfiles/train_model.dockerfile`.
+  -  Built and pushed the training image to Artifact Registry:
+     ```bash
+     us-central1-docker.pkg.dev/fake-news-api-project/trainer-repo/train-job
+     ```
+     -  Submitted the training job via GitHub Actions using `gcloud ai custom-jobs create`:
+    ```bash
+        gcloud ai custom-jobs create \
+          --region=us-central1 \
+          --display-name=vertex-lstm-train \
+          --worker-pool-spec=machine-type=n1-standard-4,replica-count=1,container-image-uri=us-central1-docker.pkg.dev/fake-news-api-project/trainer-repo/train-job
+    ```
+    Job submission is automated via .github/workflows/train-vertexai.yml, which supports manual triggering through workflow_dispatch.
+      ![Vertex](reports/figures/VertexAI.png)
+
   - [ ] Data storage in GCP bucket
+  - Training data train.csv is stored in GCS at:
+   https://storage.googleapis.com/mlops_fake_news/clean.csv
+  - Model artifacts (lstm_model.h5, tokenizer.pkl) are saved back to the same bucket using gcsfs:
+  ```python
+    fs.put("/tmp/lstm_model.h5", "gs://mlops_fake_news/lstm_model.h5")
+    fs.put("/tmp/tokenizer.pkl", "gs://mlops_fake_news/tokenizer.pkl")
+  ```
+  Public read access is enabled on the bucket to support model downloading from Cloud Run.
+  ![Data](reports/figures/data_store.png)
+
+
+
 - [ ] **3.3 Deploying API with FastAPI & GCP Cloud Functions**
   - [ ] FastAPI app for model predictions
     - Created `/predict` POST endpoint in `main.py` using FastAPI.

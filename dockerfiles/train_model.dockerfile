@@ -15,7 +15,7 @@ COPY pyproject.toml .
 COPY Makefile .
 COPY fake_news_detection/ fake_news_detection/
 COPY data/ data/
-COPY config/ config/
+COPY config.yml .
 
 
 # Install Python dependencies
