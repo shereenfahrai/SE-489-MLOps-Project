@@ -6,7 +6,14 @@ Defines the LSTM-based text classification model.
 
 from typing import Optional
 
-from tensorflow.keras.layers import LSTM, Dense, Dropout, Embedding, GlobalMaxPooling1D, Input
+from tensorflow.keras.layers import (
+    LSTM,
+    Dense,
+    Dropout,
+    Embedding,
+    GlobalMaxPooling1D,
+    Input,
+)
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
@@ -35,7 +42,9 @@ def build_lstm_model(
         Model: A compiled Keras model ready for training.
     """
     inputs = Input(shape=(maxlen,), name="input")
-    x = Embedding(input_dim=vocab_size + 1, output_dim=embed_dim, name="embedding")(inputs)
+    x = Embedding(input_dim=vocab_size + 1, output_dim=embed_dim, name="embedding")(
+        inputs
+    )
     x = Dropout(dropout_rate, name="dropout1")(x)
     x = LSTM(lstm_units, return_sequences=True, name="lstm")(x)
     x = Dropout(dropout_rate, name="dropout2")(x)
@@ -46,5 +55,7 @@ def build_lstm_model(
 
     model = Model(inputs, outputs, name="LSTM_TextClassifier")
     optimizer = Adam(learning_rate=learning_rate)
-    model.compile(optimizer=optimizer, loss="categorical_crossentropy", metrics=["accuracy"])
+    model.compile(
+        optimizer=optimizer, loss="categorical_crossentropy", metrics=["accuracy"]
+    )
     return model
