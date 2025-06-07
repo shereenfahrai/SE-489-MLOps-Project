@@ -8,12 +8,12 @@ A machine learning project for detecting fake and real news articles.
 - [ ] Course & Section: SE 489 ML Engineering for Production (MLOps), Sections 910 and 930
 
 ## 2. Project Overview
-- [ ] Brief summary of the project (2-3 sentences): This project builds a machine learning pipeline to detect fake versus real news articles. In order to ensure reproducibility and scalability, we use an LSTM‑based natural language processing model, integrated within an MLOps framework. 
-- [ ] Problem statement and motivation: The spread of misinformation online can have very serious social, political, and economic consequences. To address this, automating the accurate detection of fake news can help platforms and end users filter unreliable content and make better informed decisions.  
+- [ ] Brief summary of the project (2-3 sentences): This project builds a machine learning pipeline to detect fake versus real news articles. In order to ensure reproducibility and scalability, we use an LSTM‑based natural language processing model, integrated within an MLOps framework.
+- [ ] Problem statement and motivation: The spread of misinformation online can have very serious social, political, and economic consequences. To address this, automating the accurate detection of fake news can help platforms and end users filter unreliable content and make better informed decisions.
 - [ ] Main objectives:
-    - Develop a text‑classification model to distinguish fake news from real news with high accuracy.  
-    - Establish a reproducible, version‑controlled MLOps pipeline (data, experiment tracking, and deployment).  
-    - Integrate third‑party tools (such as MLflow) for experiment tracking and model management.  
+    - Develop a text‑classification model to distinguish fake news from real news with high accuracy.
+    - Establish a reproducible, version‑controlled MLOps pipeline (data, experiment tracking, and deployment).
+    - Integrate third‑party tools (such as MLflow) for experiment tracking and model management.
     - Evaluate the model using accuracy, precision, recall, and F1-score.
     - Containerize the training and prediction scripts using Docker to ensure environment consistency and portability.
     - Prepare for a user‑friendly GUI interface in later phases.
@@ -28,7 +28,7 @@ A machine learning project for detecting fake and real news articles.
 - [ ] [PHASE3.md](./PHASE3.md): Continuous ML & Deployment
 
 ## 5. Setup Instructions
-- [ ] How to set up the environment (conda/pip, requirements.txt, Docker, etc.): 
+- [ ] How to set up the environment (conda/pip, requirements.txt, Docker, etc.):
 
     ### Prerequisites
 
@@ -44,24 +44,24 @@ A machine learning project for detecting fake and real news articles.
         make activate_environment
     ```
     ### Install Dependencies
-    ```    
+    ```
         make dev_requirements
     ```
 - [ ] How to run the code and reproduce results
     ### Run Data Processing Pipeline
-    ``` 
+    ```
         make data
     ```
     ### Run Baseline Model
-    ``` 
+    ```
         make baseline_model
     ```
     ### Train Model (LSTM)
-    ``` 
+    ```
         make train_model
     ```
     ### Run Predictions
-    ``` 
+    ```
         make predict_model
     ```
     ### Check Code Quality
@@ -121,21 +121,21 @@ A machine learning project for detecting fake and real news articles.
 
 ## 6. Contribution Summary
 - [ ] Briefly describe each team member's contributions:
-    - Shereen Fahrai: 
-        - Led data ingestion and preprocessing for Phase 1. 
-        - Implemented `make_dataset.py` to automate merging, labeling, text cleaning, and stratified splitting of raw data. 
-        - Set up the data pipeline outputs (`clean_data.csv`, `train.csv`, `predict.csv`). 
-        - Maintained the `Makefile` with reproducible CLI commands. 
+    - Shereen Fahrai:
+        - Led data ingestion and preprocessing for Phase 1.
+        - Implemented `make_dataset.py` to automate merging, labeling, text cleaning, and stratified splitting of raw data.
+        - Set up the data pipeline outputs (`clean_data.csv`, `train.csv`, `predict.csv`).
+        - Maintained the `Makefile` with reproducible CLI commands.
         - Contributed to documentation in `README.md` and `PHASE1.md`.
-        - Led containerization for Phase 2. 
-        - Created two separate Docker images for training and prediction, each with its own Dockerfile and volume mounting for model output persistence. 
+        - Led containerization for Phase 2.
+        - Created two separate Docker images for training and prediction, each with its own Dockerfile and volume mounting for model output persistence.
         - Updated project documentation (`README.md`, `PHASE2.md`) with Docker usage instructions.
- 
-    - Liangcai Xie: 
-        - Led model development and environment setup. 
-        - Refactored the baseline LSTM into a PyTorch module, built `train_model.py` for training, logging, and model saving. 
+
+    - Liangcai Xie:
+        - Led model development and environment setup.
+        - Refactored the baseline LSTM into a PyTorch module, built `train_model.py` for training, logging, and model saving.
         - Integrated MLflow for experiment tracking, and authored `visualize.py` for plotting training results
-        - Created the architecture diagram. 
+        - Created the architecture diagram.
         - Contributed to documentation across `README.md` and `PHASE1.md`.
         - Enhanced model training pipeline with profiling, logging, and resource monitoring.
         - Integrated `cProfile`, `psutil`, and `logger` for runtime diagnostics.

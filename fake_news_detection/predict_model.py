@@ -11,6 +11,7 @@ import logging
 import os
 import pickle
 import re
+import nltk
 from typing import List, Sequence
 
 import matplotlib.pyplot as plt
@@ -21,7 +22,13 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize.punkt import PunktSentenceTokenizer
 from nltk.tokenize.treebank import TreebankWordTokenizer
-from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_score, recall_score
+from sklearn.metrics import (
+    accuracy_score,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+)
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
@@ -38,15 +45,16 @@ MODEL_PATH = os.path.join(BASE_DIR, "models/lstm_model.h5")
 TOKENIZER_PATH = os.path.join(BASE_DIR, "models/tokenizer.pkl")
 DATA_PATH = os.path.join(BASE_DIR, "data/processed/predict.csv")
 # RESULT_PATH = "../data/processed/predicted_results.csv"
-CONF_MATRIX_PATH = os.path.join(BASE_DIR, "fake_news_detection/reports/figures/predict_confusion_matrix.png")
+CONF_MATRIX_PATH = os.path.join(
+    BASE_DIR, "fake_news_detection/reports/figures/predict_confusion_matrix.png"
+)
 
 # nltk.data.path.append("./data/raw/")
 sent_tokenizer = PunktSentenceTokenizer()
 word_tokenizer = TreebankWordTokenizer()
 lemmatizer = WordNetLemmatizer()
 
-# Download NLTK resources
-import nltk
+
 nltk.download("stopwords", quiet=True)
 nltk.download("punkt", quiet=True)
 nltk.download("punkt_tab", quiet=True)
@@ -89,12 +97,16 @@ def process_text(text: str) -> List[str]:
     """
     text = re.sub(r"[^a-zA-Z\s]", "", text).lower()
     words = safe_word_tokenize(text)
-    words = [lemmatizer.lemmatize(w) for w in words if w not in stop_words and len(w) > 3]
+    words = [
+        lemmatizer.lemmatize(w) for w in words if w not in stop_words and len(w) > 3
+    ]
     _, idx = np.unique(words, return_index=True)
     return [words[i] for i in sorted(idx)]
 
 
-def plot_confusion_matrix(y_true: Sequence[int], y_pred: Sequence[int], save_path: str) -> None:
+def plot_confusion_matrix(
+    y_true: Sequence[int], y_pred: Sequence[int], save_path: str
+) -> None:
     """
     Plots and saves a confusion matrix as a heatmap.
 

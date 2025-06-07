@@ -13,6 +13,7 @@ import logging
 import os
 import pickle
 import re
+import nltk
 from typing import List, Tuple, Union
 
 import hydra
@@ -21,6 +22,7 @@ import mlflow.tensorflow
 import numpy as np
 import pandas as pd
 import psutil
+
 # import pdb
 
 # Tokenization setup
@@ -37,7 +39,10 @@ from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.utils import to_categorical
 
 from fake_news_detection.models.model import build_lstm_model
-from fake_news_detection.visualizations.visualize import plot_accuracy_loss, plot_confusion_matrix
+from fake_news_detection.visualizations.visualize import (
+    plot_accuracy_loss,
+    plot_confusion_matrix,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -53,8 +58,6 @@ sent_tokenizer = PunktSentenceTokenizer()
 word_tokenizer = TreebankWordTokenizer()
 lemmatizer = WordNetLemmatizer()
 
-# Download NLTK resources
-import nltk
 nltk.download("stopwords", quiet=True)
 nltk.download("punkt", quiet=True)
 nltk.download("punkt_tab", quiet=True)
@@ -72,7 +75,9 @@ def monitor_resources(step_name: str = "unspecified") -> None:
     """
     cpu = psutil.cpu_percent(interval=1)
     mem = psutil.virtual_memory().percent
-    logger.info(f"[Resource @ {step_name}] CPU Usage: {cpu:.2f}%, Memory Usage: {mem:.2f}%")
+    logger.info(
+        f"[Resource @ {step_name}] CPU Usage: {cpu:.2f}%, Memory Usage: {mem:.2f}%"
+    )
     mlflow.log_metric(f"{step_name}_cpu_usage", cpu)
     mlflow.log_metric(f"{step_name}_mem_usage", mem)
 
@@ -108,7 +113,9 @@ def process_text(text: str) -> List[str]:
     """
     text = re.sub(r"[^a-zA-Z\s]", "", text).lower()
     words = safe_word_tokenize(text)
-    words = [lemmatizer.lemmatize(w) for w in words if w not in stop_words and len(w) > 3]
+    words = [
+        lemmatizer.lemmatize(w) for w in words if w not in stop_words and len(w) > 3
+    ]
     _, idx = np.unique(words, return_index=True)
     return [words[i] for i in sorted(idx)]
 
@@ -127,8 +134,6 @@ def load_cleaned_data() -> Tuple[List[str], List[Union[str, int]]]:
 
 
 @hydra.main(config_path="../config", config_name="config")
-
-
 def train(cfg: DictConfig) -> None:
     train_with_cfg(cfg)
 
@@ -150,7 +155,9 @@ def train_with_cfg(cfg: DictConfig) -> None:
     texts, y = load_cleaned_data()
     cleaned_texts = [process_text(text) for text in texts]
 
-    X_train, X_test, y_train, y_test = train_test_split(cleaned_texts, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(
+        cleaned_texts, y, test_size=0.2, random_state=42
+    )
 
     tokenizer = Tokenizer()
     tokenizer.fit_on_texts(X_train)
@@ -168,7 +175,6 @@ def train_with_cfg(cfg: DictConfig) -> None:
     y_test_enc = to_categorical(label_encoder.transform(y_test))
 
     # pdb.set_trace()  # DEBUG: inspect preprocessed data and label shapes
-
 
     with mlflow.start_run():
         monitor_resources("before_model_build")

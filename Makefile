@@ -71,7 +71,7 @@ build_documentation: dev_requirements
 serve_documentation: dev_requirements
 	mkdocs serve --config-file docs/mkdocs.yaml
 
-## Lint the codebase 
+## Lint the codebase
 lint:
 	ruff check .
 
