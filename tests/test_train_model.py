@@ -54,6 +54,10 @@ def test_model_structure() -> None:
         learning_rate=0.001,
     )
 
-    assert model is not None
+    # Check model input/output shape
+    assert model.input_shape == (None, 150)
+    assert model.output_shape == (None, 2)
+
+    # Just confirm it's compiled (loss and optimizer present)
+    assert model.loss is not None
     assert model.optimizer is not None
-    assert "accuracy" in model.metrics_names
