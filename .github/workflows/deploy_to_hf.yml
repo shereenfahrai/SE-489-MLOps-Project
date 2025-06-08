@@ -26,6 +26,7 @@ jobs:
           git clone https://huggingface.co/spaces/sfahrai/fake-new-detection-ui hf-space
           cp gradio_ui/gradio_app.py hf-space/app.py
           cp requirements.txt hf-space/requirements.txt
+          cp -r fake_news_detection hf-space/fake_news_detection
           cd hf-space
           git add .
           git diff --cached --quiet && echo "No changes to commit" || git commit -m "Auto-deploy Gradio app from GitHub Actions"
