@@ -29,7 +29,7 @@ jobs:
           cd hf-space
           git add .
           git diff --cached --quiet && echo "No changes to commit" || git commit -m "Auto-deploy Gradio app from GitHub Actions"
-          git push https://$HF_TOKEN@huggingface.co/spaces/sfahrai/fake-new-detection-ui main
+          git push https://huggingface:$HF_TOKEN@huggingface.co/spaces/sfahrai/fake-new-detection-ui main
       
       - name: Clean up
         run: |
