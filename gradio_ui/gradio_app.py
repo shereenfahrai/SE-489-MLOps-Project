@@ -38,7 +38,7 @@ def predict(text):
         str: "Fake" or "Real" based on the model's prediction.
     """
     cleaned = process_text(text)
-    sequence = tokenizer.texts_to_sequences([" ".join(cleaned)])
+    sequence = tokenizer.texts_to_sequences([cleaned])
     padded = pad_sequences(sequence, maxlen=MAXLEN)
     prediction = model.predict(padded)[0]  # softmax: [prob_fake, prob_real]
     label = np.argmax(prediction)
