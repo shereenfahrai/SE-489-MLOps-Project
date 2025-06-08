@@ -40,10 +40,13 @@ def predict(text):
     cleaned = process_text(text)
     sequence = tokenizer.texts_to_sequences([cleaned])
     padded = pad_sequences(sequence, maxlen=MAXLEN)
-    prediction = model.predict(padded)[0]  # softmax: [prob_fake, prob_real]
-    label = np.argmax(prediction)
+    prediction = model.predict(padded)[0]  # softmax output: [prob_fake, prob_real]
 
-    return "Fake" if label == 0 else "Real"
+    label = np.argmax(prediction)
+    confidence = prediction[label]  # confidence of predicted class
+
+    label_text = "Fake" if label == 0 else "Real"
+    return f"{label_text} ({confidence:.2%} confidence)"
 
 
 # Gradio UI
