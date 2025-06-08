@@ -35,13 +35,16 @@ def predict(text):
     Args:
         text (str): The news article body text to classify.
     Returns:
-        str: "Fake" or "Real" based on the model's prediction.  
+        str: "Fake" or "Real" based on the model's prediction.
     """
     cleaned = process_text(text)
     sequence = tokenizer.texts_to_sequences([" ".join(cleaned)])
     padded = pad_sequences(sequence, maxlen=MAXLEN)
-    prediction = model.predict(padded)[0][0]
-    return "Fake" if prediction >= 0.5 else "Real"
+    prediction = model.predict(padded)[0]  # softmax: [prob_fake, prob_real]
+    label = np.argmax(prediction)
+
+    return "Fake" if label == 0 else "Real"
+
 
 # Gradio UI
 iface = gr.Interface(
