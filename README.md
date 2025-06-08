@@ -141,6 +141,14 @@ A machine learning project for detecting fake and real news articles.
         - Integrated `cProfile`, `psutil`, and `logger` for runtime diagnostics.
         - Applied Hydra for flexible config management and CLI overrides.
         - Documented Phase 2 implementation in `PHASE2.md`, including debugging, profiling, logging, MLflow, and Hydra.
+        - Led Phase 3 implementation, focusing on CI/CD, CML, and cloud deployment.
+        - Wrote unit tests.
+        - Designed and configured multiple GitHub Actions workflows (`ci.yml`, `cml-eval.yml`, `deploy.yml`, `train-vertexai.yml`) to enable continuous testing, evaluation, deployment, and training.
+        - Developed `Dockerfile` and automated image build and deployment to **GCP Artifact Registry** and **Cloud Run**.
+        - Built FastAPI inference API (`main.py`) and successfully deployed it to **Google Cloud Run**.
+        - Created `train-vertexai.yml` to launch custom training jobs on **Vertex AI** using `gcloud ai custom-jobs create`.
+        - Verified the end-to-end pipeline from model training → deployment → live API prediction with test cases and logs.
+
 
 ## 7. References
 - [ ] List of datasets, frameworks, and major third-party tools used:

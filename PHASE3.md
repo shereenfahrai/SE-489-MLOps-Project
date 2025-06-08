@@ -3,17 +3,59 @@
 ## 1. Continuous Integration & Testing
 - [ ] **1.1 Unit Testing with pytest**
   - [ ] Test scripts for data processing, model training, and evaluation
+  - `make_dataset.py`: Validates raw CSV loading, label assignment, text cleaning, and proper train/test split
+  - `model.py`: Confirms model layer structure, output shapes, and successful compilation with correct metrics
+  - `predict_model.py`: Tests inference pipeline, prediction consistency, and confusion matrix generation
+
   - [ ] Documentation of the testing process and example test cases
+  - All test files are located in the `tests/` directory and follow `test_*.py` naming convention:
+  - `tests/test_make_dataset.py`
+  - `tests/test_train_model.py`
+  - `tests/test_predict_model.py`
+
+  - Each file includes:
+      - Clear separation of unit test functions
+      - Explanatory docstrings and inline comments
+      - Use of lightweight dummy data for isolated logic validation
+    - Example test command:
+      ```bash
+      pytest tests/ --maxfail=3 --disable-warnings --tb=short
+      ```
+
+
 - [ ] **1.2 GitHub Actions Workflows**
   - [ ] CI workflows for running tests, DVC, code checks (e.g., ruff), Docker builds
-  - Created two GitHub Actions workflows: `ci.yml` for code checks and testing, and `deploy.yml` for automated deployment.
+  - Created four GitHub Actions workflows: `ci.yml`, `cml-eval.yml`, `deploy.yml`, and `train-vertexai.yml`.
 
   - [ ] Workflow YAML files included
-  -  `ci.yml` is triggered on every push or pull request to the `main` branch. It includes:
-  - Running code format checks using `ruff` and `black`
-  - Type checking with `mypy`
-  - Placeholder for `pytest` testing (test files scaffolded, tests to be added in later steps)
-  -  `deploy.yml` builds the Docker image, downloads model artifacts from GitHub Releases, pushes the image to GCP Artifact Registry, and deploys the service to Cloud Run.
+  - `ci.yml` is triggered on every push or pull request to the `main` branch. It includes:
+      - Code formatting checks using `ruff` and `black`
+      - Type checking using `mypy`
+      - Running all unit tests in `tests/` using `pytest`
+
+    - `cml-eval.yml` triggers on pull requests. It:
+      - Runs model evaluation (`predict_model.py`)
+      - Generates a confusion matrix figure
+      - Uses CML to automatically comment the report (with the figure) on the PR
+      - Uses a Personal Access Token (`CML_PAT`) as GitHub secret
+
+    - `deploy.yml` handles continuous deployment:
+      - Builds and pushes Docker image to GCP Artifact Registry
+      - Downloads model weights (if needed) from GitHub Releases
+      - Deploys to Google Cloud Run automatically on `main` merge
+
+    - `train-vertexai.yml` runs training jobs on GCP Vertex AI:
+      - Submits a training pipeline using `gcloud`
+      - Logs training output
+      - Artifacts and metrics optionally stored in GCS or Vertex AI Experiments
+
+  - These workflows enable full CI/CD + CML pipelines:
+    - Code checked and tested on push
+    - Evaluation results visualized on PR
+    - Deployments automated on merge
+    - Cloud training jobs triggered manually or on schedule
+
+  - All workflow YAMLs are located in `.github/workflows/` and can be triggered manually or via PR/push.
 
 - [ ] **1.3 Pre-commit Hooks**
   - [ ] Pre-commit config and setup instructions
@@ -26,6 +68,7 @@
     - `mypy`
   -  Installed pre-commit locally and verified the hooks trigger on each commit to ensure consistent code quality.
   -  ```pre-commit run --all-files```
+  - These hooks ensure consistent style and catch errors before code reaches CI.
 
 
 ## 2. Continuous Docker Building & CML
@@ -107,7 +150,6 @@
   ```
   Public read access is enabled on the bucket to support model downloading from Cloud Run.
   ![Data](reports/figures/data_store.png)
-
 
 
 - [ ] **3.3 Deploying API with FastAPI & GCP Cloud Functions**
