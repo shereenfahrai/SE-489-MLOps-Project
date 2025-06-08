@@ -2,7 +2,7 @@ import gradio as gr
 import numpy as np
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from fake_news_detection.predict_model import process_text
-from fake_news_detection.model_loader import model, tokenizer
+from fake_news_detection.api.model_loader import model, tokenizer
 
 MAXLEN = 150
 
