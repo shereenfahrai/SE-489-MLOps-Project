@@ -33,5 +33,7 @@ jobs:
     - name: Type Check with Mypy
       run: make typecheck
 
-#    - name: Run Tests
-#      run: pytest
+    - name: Run Unit Tests with pytest
+      run: |
+        pip install pytest
+        pytest tests/ --maxfail=3 --disable-warnings --tb=short

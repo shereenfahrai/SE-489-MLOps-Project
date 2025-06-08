@@ -43,8 +43,36 @@
 
 - [ ] **2.2 Continuous Machine Learning (CML)**
   - [ ] CML integration for automated model training on PRs
+  We integrated [CML (Continuous Machine Learning)](https://cml.dev/) into our GitHub Actions workflow to automate model evaluation every time a pull request is opened or updated on the `main` branch. The workflow performs the following:
+
+  - Checks out the PR branch
+  - Installs Python dependencies
+  - Runs the model evaluation script (`predict_model.py`)
+  - Generates a confusion matrix figure
+  - Posts the evaluation results as a PR comment using `cml comment create`
+
+  We configured authentication using a **Personal Access Token (PAT)** with the required permissions (`repo`, `write:discussion`, `write:packages`, `read:org`), stored as a GitHub Actions secret named `CML_PAT`.
+
+
   - [ ] Example CML outputs (metrics, visualizations)
+  - On each PR, CML automatically generates and posts a **confusion matrix** image like the one below, which gives visual feedback on prediction quality.
+    Sample comment (automatically posted by CML):
+  ![Confusion Matrix](reports/figures/CML_PR_COMMENT.png)
+
   - [ ] Setup and usage documentation
+
+  To reproduce or extend our setup:
+
+  1. **Workflow file:** `.github/workflows/cml-eval.yml`
+  2. **Dependencies:** Listed in `requirements.txt`
+  3. **Evaluation script:** `fake_news_detection/predict_model.py`
+  4. **Token setup:**
+     - Generate a GitHub **Classic PAT** with the following scopes:
+       `repo`, `write:discussion`, `write:packages`, `read:org`
+     - Save the token in repo secrets:
+       `Settings → Secrets and variables → Actions → New repository secret`
+       Name: `CML_PAT`, Value: your generated token
+  5. **Trigger:** Any pull request on the `main` branch will trigger the evaluation workflow.
 
 ## 3. Deployment on Google Cloud Platform (GCP)
 - [ ] **3.1 GCP Artifact Registry**
