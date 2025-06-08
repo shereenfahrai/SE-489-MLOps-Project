@@ -45,4 +45,4 @@ jobs:
       - name: Post to PR with CML
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: cml comment report.md
+        run: cml comment create report.md

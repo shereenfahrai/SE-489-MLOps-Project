@@ -14,7 +14,7 @@ import re
 import nltk
 from typing import List, Sequence
 import tempfile
-import requests
+import requests  # type: ignore
 
 import matplotlib.pyplot as plt
 import numpy as np
