@@ -52,7 +52,7 @@ mypy_extensions==1.1.0
 namex==0.0.9
 nltk==3.9.1
 nodeenv==1.9.1
-numpy==2.1.3
+numpy~=1.23
 opt_einsum==3.4.0
 optree==0.15.0
 packaging<25
