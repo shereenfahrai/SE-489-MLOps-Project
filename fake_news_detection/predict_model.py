@@ -13,6 +13,8 @@ import pickle
 import re
 import nltk
 from typing import List, Sequence
+import tempfile
+import requests
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -41,9 +43,27 @@ logger = logging.getLogger(__name__)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Load model and tokenizer
-MODEL_PATH = os.path.join(BASE_DIR, "models/lstm_model.h5")
-TOKENIZER_PATH = os.path.join(BASE_DIR, "models/tokenizer.pkl")
-DATA_PATH = os.path.join(BASE_DIR, "data/processed/predict.csv")
+MODEL_URL = "https://storage.googleapis.com/mlops_fake_news/lstm_model.h5"
+model_temp = tempfile.NamedTemporaryFile(delete=False, suffix=".h5")
+model_temp.write(requests.get(MODEL_URL).content)
+model_temp.close()
+MODEL_PATH = model_temp.name
+
+# 下载并设置 tokenizer 路径
+TOKENIZER_URL = "https://storage.googleapis.com/mlops_fake_news/tokenizer.pkl"
+tokenizer_temp = tempfile.NamedTemporaryFile(delete=False, suffix=".pkl")
+tokenizer_temp.write(requests.get(TOKENIZER_URL).content)
+tokenizer_temp.close()
+TOKENIZER_PATH = tokenizer_temp.name
+
+# 下载并设置预测数据路径
+DATA_URL = "https://storage.googleapis.com/mlops_fake_news/predict.csv"
+data_temp = tempfile.NamedTemporaryFile(delete=False, suffix=".csv")
+data_temp.write(requests.get(DATA_URL).content)
+data_temp.close()
+DATA_PATH = data_temp.name
+
+
 # RESULT_PATH = "../data/processed/predicted_results.csv"
 CONF_MATRIX_PATH = os.path.join(
     BASE_DIR, "fake_news_detection/reports/figures/predict_confusion_matrix.png"
