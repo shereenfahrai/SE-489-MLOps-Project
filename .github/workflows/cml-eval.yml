@@ -34,9 +34,15 @@ jobs:
           echo "" >> report.md
           echo "Confusion Matrix for the latest model on prediction set." >> report.md
 
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install CML
+        run: npm install -g @dvcorg/cml
+
       - name: Post to PR with CML
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          curl -sSL https://get.cml.dev | sh
-          ./bin/cml comment report.md
+        run: cml comment report.md
