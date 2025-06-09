@@ -8,16 +8,15 @@ A machine learning project for detecting fake and real news articles.
 - [ ] Course & Section: SE 489 ML Engineering for Production (MLOps), Sections 910 and 930
 
 ## 2. Project Overview
-- [ ] Brief summary of the project (2-3 sentences): This project builds a machine learning pipeline to detect fake versus real news articles. In order to ensure reproducibility and scalability, we use an LSTM‑based natural language processing model, integrated within an MLOps framework.
+- [ ] Brief summary of the project (2-3 sentences): This project builds a full machine learning pipeline to detect fake versus real news articles, using an LSTM‑based natural language processing model, integrated within an MLOps framework. This project implements data preprocessing, model training, experiment tracking, containerization, continuous integration and testing, cloud deployment of a FastAPI API, and an interactive Gradio-based web interface deployed to Hugging Face Spaces.
 - [ ] Problem statement and motivation: The spread of misinformation online can have very serious social, political, and economic consequences. To address this, automating the accurate detection of fake news can help platforms and end users filter unreliable content and make better informed decisions.
 - [ ] Main objectives:
-    - Develop a text‑classification model to distinguish fake news from real news with high accuracy.
-    - Establish a reproducible, version‑controlled MLOps pipeline (data, experiment tracking, and deployment).
-    - Integrate third‑party tools (such as MLflow) for experiment tracking and model management.
-    - Evaluate the model using accuracy, precision, recall, and F1-score.
-    - Containerize the training and prediction scripts using Docker to ensure environment consistency and portability.
-    - Prepare for a user‑friendly GUI interface in later phases.
-
+    - Build a robust text-classification model to distinguish fake news from real news with high accuracy.
+    - Implement a fully reproducible MLOps pipeline, including data preparation, training, evaluation, and prediction.
+    - Track experiments and model metrics using MLflow for better comparability and transparency.
+    - Use Docker to containerize all training, prediction, and API services for reliable and portable execution.
+    - Automate CI/CD workflows with GitHub Actions for linting, testing, cloud deployment, and continuous training.
+    - Deploy model services to Google Cloud (Cloud Run, Vertex AI) and a user-friendly web UI to Hugging Face Spaces using Gradio.
 
 ## 3. Project Architecture Diagram
 ![Architecture Diagram](reports/figures/ml_pipeline_architecture.png)
@@ -118,6 +117,9 @@ A machine learning project for detecting fake and real news articles.
     docker run -it --rm -v $(pwd)/models:/app/models predictor
     ```
     This loads trained model and tokenizer from shared volume and runs inference on test data!
+    ### Try the Interactive UI (Public Deployment)
+    You can test the model live through our Hugging Face Space:
+    https://huggingface.co/spaces/sfahrai/fake-new-detection-ui
 
 ## 6. Contribution Summary
 - [ ] Briefly describe each team member's contributions:
@@ -130,6 +132,11 @@ A machine learning project for detecting fake and real news articles.
         - Led containerization for Phase 2.
         - Created two separate Docker images for training and prediction, each with its own Dockerfile and volume mounting for model output persistence.
         - Updated project documentation (`README.md`, `PHASE2.md`) with Docker usage instructions.
+        - Developed the Gradio-based interactive UI (`gradio_app.py`) for showcasing the LSTM model's predictions.
+        - Assisted in model evaluation interpretation and sanity checks by manually validating outputs against both AI-generated and real news examples during UI testing.
+        - Implemented automated deployment of the UI to Hugging Face Spaces using GitHub Actions (`deploy_to_hf.yml`).
+        - Documented UI usage and deployment in `PHASE3.md` and `README.md`.
+        - Generated screenshots and example predictions to demonstrate the app in action.
 
     - Liangcai Xie:
         - Led model development and environment setup.
@@ -154,7 +161,7 @@ A machine learning project for detecting fake and real news articles.
 - [ ] List of datasets, frameworks, and major third-party tools used:
     - Dataset: https://www.kaggle.com/datasets/clmentbisaillon/fake-and-real-news-dataset?resource=download
     - Baseline model code adapted from: https://www.kaggle.com/code/yossefmohammed/true-and-fake-news-lstm-accuracy-97-90/notebook
-    - Tools: TensorFlow, Keras, NLTK, MLflow, Ruff, Mypy, PyTorch, Docker
+    - Tools: TensorFlow, Keras, NLTK, MLflow, Ruff, Mypy, PyTorch, Docker, Google Cloud Platform, FastAPI, VertexAI, Gradio, Hugging Face Spaces
 
 
 

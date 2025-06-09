@@ -191,9 +191,37 @@
     - Screenshots of successful deployment and API test included in documentation.
 - [ ] **3.5 Interactive UI Deployment**
   - [ ] Streamlit or Gradio app for model demonstration
+    - Implemented a clean and functional interactive web interface using **Gradio 4.27.0** to demonstrate our fake news classification model.
+    - The app accepts raw article body text as input and returns a classification: "Fake" or "Real", along with a confidence percentage.
+    - Input text is preprocessed using the same standardized tokenization and cleaning pipeline applied during model training, ensuring alignment between training and inference stages.
+    - The Gradio app loads the LSTM model and tokenizer from the public Google Cloud Storage (GCS) bucket at runtime to ensure portability and consistency across deployments.
   - [ ] Deployment on Hugging Face platform
+    - Deployed the Gradio app to **Hugging Face Spaces** under the name `sfahrai/fake-new-detection-ui`.
+    - Model and tokenizer are fetched at runtime from:
+      - `https://storage.googleapis.com/mlops_fake_news/lstm_model.h5`
+      - `https://storage.googleapis.com/mlops_fake_news/tokenizer.pkl`
+    - Hugging Face Space is configured to run the app using `gradio_app.py`, renamed as `app.py` during GitHub Actions deployment.
+    - This setup allows the UI to remain lightweight and cloud-compatible, while ensuring full functionality in a public environment.
   - [ ] Integration of UI deployment into GitHub Actions workflow
+    - Created `deploy_to_hf.yml` workflow inside `.github/workflows/` to automate Hugging Face deployment on every push to `main`.
+    - The workflow:
+      - Clones the Hugging Face Space repository using the `HF_TOKEN` GitHub secret
+      - Copies the application interface code and all required files into the Hugging Face Space directory to support deployment and execution of the Gradio UI
+      - Commits and pushes changes directly to the Hugging Face Space repo, triggering a UI rebuild
+    - This setup ensures any updates to the UI are continuously deployed without manual intervention.
+    - The deploy step in the GitHub Actions log confirms a successful push to the Hugging Face Space repository, which automatically triggers the UI rebuild upon push to main. A snapshot of this pipeline stage is shown below.
+      ![UI Deployment Workflow](reports/figures/ui_pipeline_view.png)
   - [ ] Screenshots and usage examples
+    - Below is an example of the interface in action:
+      **Before Prediction:**
+      ![UI Before Prediction](reports/figures/ui_before_prediction.png)  
+
+      **After Fake News Submission (AI-Generated):**
+      ![UI After Prediction of Fake News](reports/figures/ui_fake_news_prediction.png)
+
+      **After Real News Submission:**
+      Source: https://www.nbcnews.com/news/us-news/kilmar-abrego-garcia-questions-rcna211601
+      ![UI After Prediction of Real News](reports/figures/ui_real_news_prediction.png)
 
 ## 4. Documentation & Repository Updates
 - [ ] **4.1 Comprehensive README**

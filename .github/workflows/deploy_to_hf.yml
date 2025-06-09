@@ -1,0 +1,42 @@
+name: Deploy Gradio UI to Hugging Face Space
+
+on:
+  push:
+    branches:
+      - main
+      - feature/ui_deployment # testing branch for UI deployment
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Git
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+
+      - name: Clone Hugging Face Space repo
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git clone https://huggingface.co/spaces/sfahrai/fake-new-detection-ui hf-space
+          cp gradio_ui/gradio_app.py hf-space/app.py
+          cp requirements.txt hf-space/requirements.txt
+          cp -r fake_news_detection hf-space/fake_news_detection
+          cd hf-space
+          git add .
+          git diff --cached --quiet && echo "No changes to commit" || git commit -m "Auto-deploy Gradio app from GitHub Actions"
+          git push https://huggingface:$HF_TOKEN@huggingface.co/spaces/sfahrai/fake-new-detection-ui main
+      
+      - name: Clean up
+        run: |
+          rm -rf hf-space
+          echo "Deployment to Hugging Face Space completed successfully."
+
+      - name: Notify success
+        run: |
+          echo "Gradio app deployed successfully to Hugging Face Space."
