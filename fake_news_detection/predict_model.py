@@ -11,26 +11,20 @@ import logging
 import os
 import pickle
 import re
-import nltk
-from typing import List, Sequence
 import tempfile
-import requests  # type: ignore
+from typing import List, Sequence
 
 import matplotlib.pyplot as plt
+import nltk
 import numpy as np
 import pandas as pd
+import requests  # type: ignore
 import seaborn as sns
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize.punkt import PunktSentenceTokenizer
 from nltk.tokenize.treebank import TreebankWordTokenizer
-from sklearn.metrics import (
-    accuracy_score,
-    confusion_matrix,
-    f1_score,
-    precision_score,
-    recall_score,
-)
+from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_score, recall_score
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
@@ -65,9 +59,7 @@ DATA_PATH = data_temp.name
 
 
 # RESULT_PATH = "../data/processed/predicted_results.csv"
-CONF_MATRIX_PATH = os.path.join(
-    BASE_DIR, "fake_news_detection/reports/figures/predict_confusion_matrix.png"
-)
+CONF_MATRIX_PATH = os.path.join(BASE_DIR, "fake_news_detection/reports/figures/predict_confusion_matrix.png")
 
 # nltk.data.path.append("./data/raw/")
 sent_tokenizer = PunktSentenceTokenizer()
@@ -117,16 +109,12 @@ def process_text(text: str) -> List[str]:
     """
     text = re.sub(r"[^a-zA-Z\s]", "", text).lower()
     words = safe_word_tokenize(text)
-    words = [
-        lemmatizer.lemmatize(w) for w in words if w not in stop_words and len(w) > 3
-    ]
+    words = [lemmatizer.lemmatize(w) for w in words if w not in stop_words and len(w) > 3]
     _, idx = np.unique(words, return_index=True)
     return [words[i] for i in sorted(idx)]
 
 
-def plot_confusion_matrix(
-    y_true: Sequence[int], y_pred: Sequence[int], save_path: str
-) -> None:
+def plot_confusion_matrix(y_true: Sequence[int], y_pred: Sequence[int], save_path: str) -> None:
     """
     Plots and saves a confusion matrix as a heatmap.
 

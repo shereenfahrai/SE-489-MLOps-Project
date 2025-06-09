@@ -1,6 +1,7 @@
-import tensorflow as tf
-import joblib
 import os
+
+import joblib
+import tensorflow as tf
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

@@ -4,7 +4,6 @@ Unit tests for make_dataset.py
 Tests text cleaning and CSV output generation.
 """
 
-
 from fake_news_detection.data.make_dataset import clean_text
 
 
