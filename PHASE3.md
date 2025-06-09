@@ -139,7 +139,7 @@
     ```
     Job submission is automated via .github/workflows/train-vertexai.yml, which supports manual triggering through workflow_dispatch.
       ![Vertex](reports/figures/VertexAI.png)
-
+      ![Vertex](reports/figures/VertexAI_GCP.png)
   - [ ] Data storage in GCP bucket
   - Training data train.csv is stored in GCS at:
    https://storage.googleapis.com/mlops_fake_news/clean.csv
@@ -210,21 +210,21 @@
       - Commits and pushes changes directly to the Hugging Face Space repo, triggering a UI rebuild
     - This setup ensures any updates to the UI are continuously deployed without manual intervention.
     - The deploy step in the GitHub Actions log confirms a successful push to the Hugging Face Space repository, which automatically triggers the UI rebuild upon push to main. A snapshot of this pipeline stage is shown below.
-      
+
       ![UI Deployment Workflow](reports/figures/ui_pipeline_view.png)
   - [ ] Screenshots and usage examples
     - Below is an example of the interface in action:
-      
+
       **Before Prediction:**
 
-      ![UI Before Prediction](reports/figures/ui_before_prediction.png)  
+      ![UI Before Prediction](reports/figures/ui_before_prediction.png)
 
       **After Fake News Submission (AI-Generated):**
 
       ![UI After Prediction of Fake News](reports/figures/ui_fake_news_prediction.png)
 
       **After Real News Submission:**
-      
+
       Source: https://www.nbcnews.com/news/us-news/kilmar-abrego-garcia-questions-rcna211601
       ![UI After Prediction of Real News](reports/figures/ui_real_news_prediction.png)
 
