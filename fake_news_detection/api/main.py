@@ -1,8 +1,10 @@
-from fastapi import FastAPI
-from fake_news_detection.api.schemas import InputText
-from fake_news_detection.api.model_loader import model, tokenizer
-import tensorflow as tf
 from typing import Dict  # For return type annotation
+
+import tensorflow as tf
+from fastapi import FastAPI
+
+from fake_news_detection.api.model_loader import model, tokenizer
+from fake_news_detection.api.schemas import InputText
 
 app = FastAPI()
 

@@ -1,11 +1,12 @@
+import pickle
+import tempfile
+
 import gradio as gr
 import numpy as np
 import requests
-import tempfile
-import pickle
-import nltk
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+
 from fake_news_detection.predict_model import process_text
 
 # Set max sequence length to match training
@@ -27,6 +28,7 @@ tokenizer_temp.write(requests.get(tokenizer_url).content)
 tokenizer_temp.close()
 with open(tokenizer_temp.name, "rb") as f:
     tokenizer = pickle.load(f)
+
 
 # Prediction function
 def predict(text):
@@ -55,7 +57,7 @@ iface = gr.Interface(
     inputs=gr.Textbox(lines=6, label="Paste Full News Article Body Text"),
     outputs=gr.Label(label="Prediction"),
     title="Fake News Detection App",
-    description="Predict whether a news article is Fake or Real using an LSTM-based model."
+    description="Predict whether a news article is Fake or Real using an LSTM-based model.",
 )
 
 iface.launch()
